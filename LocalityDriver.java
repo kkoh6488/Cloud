@@ -1,5 +1,6 @@
 package Cloud;
 
+import java.io.File;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -20,7 +21,14 @@ public class LocalityDriver {
 			System.err.println("Usage: TagDriver <in> <places.txt-path> <out>");
 			System.exit(2);
 		}
-		
+
+		File f = new File(otherArgs[1]);
+		if (!f.exists())
+		{
+			System.err.println("Place.txt not found");
+			System.exit(2);
+		}
+
 		// Set the path for places.txt
 		conf.set("places-path", otherArgs[1]);
 
