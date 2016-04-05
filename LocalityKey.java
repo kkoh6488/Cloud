@@ -48,8 +48,12 @@ public class LocalityKey implements WritableComparable {
 	@Override
 	public String toString()
 	{
-		return placeID.toString();
-	}
+        if (!localityName.toString().equals("\t \t"))
+        {
+            return localityName.toString();
+        }
+        return placeID.toString();
+    }
 
 	@Override
 	public boolean equals(Object o)
