@@ -7,6 +7,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.FileSplit;
 
+import java.io.File;
 import java.io.IOException;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
@@ -19,6 +20,12 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 		@Override
 		protected void setup(Context context) throws IOException, InterruptedException {
 	        Configuration conf = context.getConfiguration();
+			File f = new File(conf.get("places-path"));
+			if (!f.exists())
+			{
+				System.err.println("Place.txt not found");
+				System.exit(2);
+			}
 			String filepath = ((FileSplit) context.getInputSplit()).getPath().toString();
 			pJoiner = new PlaceJoiner(conf.get("places-path"));
 	    }

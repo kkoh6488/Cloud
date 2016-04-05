@@ -32,7 +32,7 @@ public class LocalityDriver {
 		System.out.println(pj.IsIdForLocale("xbxI9VGYA5oZH8tLJA"));
 		System.out.println(pj.GetLocaleCount());
 		for (int i = 0; i < 10; i++) {
-			System.out.println(pj.GetLocales().next());
+			//System.out.println(pj.GetLocales().);
 		}
 		System.exit(2);
 
