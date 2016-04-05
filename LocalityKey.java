@@ -28,21 +28,21 @@ public class LocalityKey implements WritableComparable {
 		neighborhoodName.set(neighborhood);
 		ownerID.set(owner);
 	}
-	
+
+    @Override
 	public int compareTo(Object o)
 	{
-		/*
-		if (countryName.equals(lk.countryName) && localityName.equals(lk.localityName))
+        LocalityKey lk = (LocalityKey) o;
+        if (countryName.equals(lk.countryName) && localityName.equals(lk.localityName))
 		{
-			if (neighborhoodName != null && lk.neighborhoodName != null &&
+            if (neighborhoodName != null && lk.neighborhoodName != null &&
 					neighborhoodName.equals(lk.neighborhoodName))
 			{
-				return 0;
-			}
-		}
-		*/
-		LocalityKey lk = (LocalityKey) o;
-		return placeID.toString().compareTo(lk.toString());
+                return 0;
+            }
+        }
+        return -1;
+		//return placeID.toString().compareTo(lk.toString());
 	}
 
 	@Override
@@ -65,6 +65,13 @@ public class LocalityKey implements WritableComparable {
 		}
 		return false;
 	}
+
+    @Override
+    public int hashCode()
+    {
+        return localityName.hashCode() + countryName.hashCode();
+    }
+
 	public String getLocale()
 	{
 		return localityName.toString();
