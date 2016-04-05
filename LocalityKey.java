@@ -61,7 +61,7 @@ public class LocalityKey implements WritableComparable {
 		if(o instanceof LocalityKey)
 		{
 			LocalityKey lk = (LocalityKey) o;
-			return placeID.equals(lk.placeID);
+			return localityName.equals(lk.localityName) && countryName.equals(lk.countryName);
 		}
 		return false;
 	}

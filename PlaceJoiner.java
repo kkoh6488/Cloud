@@ -26,6 +26,8 @@ public class PlaceJoiner {
 	private HashMap<String, String> localeIDToCountry;
 	
 	private String[] tempResult;
+
+	private boolean isReady = false;
 	
 	public PlaceJoiner(String path)
 	{
@@ -56,7 +58,7 @@ public class PlaceJoiner {
 					String placeID = values[0];
 					String placeName = values[4];
 					String placeType = values[5];
-					String country = values[values.length - 1];
+					String country = placeName.substring(placeName.lastIndexOf(",") + 2);
 					if (values.length < 7)
 					{
 						continue;
@@ -76,6 +78,7 @@ public class PlaceJoiner {
 						*/
 					}
 				}
+				isReady = true;
 			} catch (IOException e) 
 			{
 				e.printStackTrace();
@@ -85,7 +88,12 @@ public class PlaceJoiner {
 			System.out.println(("The places.txt file could not be found"));
 		}
 	}
-	
+
+	public boolean IsReady()
+	{
+		return isReady;
+	}
+
 	/* Checks if the placeid associated with a photo is for a locale.
 	 * (ie no neighborhood data)
 	 */
