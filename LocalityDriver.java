@@ -22,7 +22,7 @@ public class LocalityDriver {
 		}
 		
 		// Set the path for places.txt
-		conf.set("places-path", args[1]);
+		conf.set("places-path", otherArgs[1]);
 
 		Job job = new Job(conf, "tag owner inverted list");
 		job.setNumReduceTasks(1); // we use three reducers, you may modify the number
@@ -30,7 +30,7 @@ public class LocalityDriver {
 		job.setJarByClass(LocalityDriver.class);
 
 		TextInputFormat.addInputPath(job, new Path(otherArgs[0]));
-		TextOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+		TextOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
 
 		job.setMapperClass(LocalityMapper.class);
 		job.setReducerClass(LocalityReducer.class);
