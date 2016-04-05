@@ -1,13 +1,10 @@
 package Cloud;
 
-import java.io.BufferedReader;
-import java.io.Console;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSInputStream;
+
+import java.io.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 public class PlaceJoiner {
@@ -30,7 +27,7 @@ public class PlaceJoiner {
 
 	private boolean isReady = false;
 	
-	public PlaceJoiner(String path)
+	public PlaceJoiner(String path, FSDataInputStream fs)
 	{
 		filepath = path;
 		idToLocale = new HashMap<String, String>();
@@ -38,55 +35,52 @@ public class PlaceJoiner {
 		localeIDToCountry = new HashMap<String, String>();
 		neighborhoodLocales = new HashMap<String, String>();
 		tempResult = new String[3];
-		LoadPlacesIntoMemory();
+		LoadPlacesIntoMemory(fs);
 	}
 	
 	/* Read each line of the places file and load locales and neighborhoods into memory.
 	 * Locality have type = 7; Neighborhoods have type = 22.
 	 * We need to identify the locale for each neighborhood as well.
 	 */
-	private void LoadPlacesIntoMemory()
+	private void LoadPlacesIntoMemory(FSDataInputStream fs)
 	{
 		BufferedReader br;
-		try {
-			br = new BufferedReader(new FileReader(filepath));
-			String s;
-			try 
+		br = new BufferedReader(new InputStreamReader(fs));
+		String s;
+		try
+		{
+			while ((s = br.readLine()) != null)
 			{
-				while ((s = br.readLine()) != null)
+				String[] values = s.split("\t");
+				String placeID = values[0];
+				String placeName = values[4];
+				String placeType = values[5];
+				String country = placeName.substring(placeName.lastIndexOf(",") + 2);
+				if (values.length < 7)
 				{
-					String[] values = s.split("\t");
-					String placeID = values[0];
-					String placeName = values[4];
-					String placeType = values[5];
-					String country = placeName.substring(placeName.lastIndexOf(",") + 2);
-					if (values.length < 7)
-					{
-						continue;
-					}
-					if (placeType.equals("7"))
-					{
-						idToLocale.put(placeID, placeName);
-						localeIDToCountry.put(placeID, country);
-					}
-					else if (placeType.equals("22"))
-					{
-						/*
-						s = s.replace(",", "");
-						String[] nhoodValues = s.split(" ");
-						String locale = nhoodValues[1];			// Assume that the 2nd value is a locale - might not be, but will test.
-						String tagCountry = nhoodValues[nhoodValues.length - 1];	// Assume the last value is the country
-						*/
-					}
+					continue;
 				}
-				isReady = true;
-			} catch (IOException e) 
-			{
-				e.printStackTrace();
+				if (placeType.equals("7"))
+				{
+					idToLocale.put(placeID, placeName);
+					localeIDToCountry.put(placeID, country);
+				}
+				else if (placeType.equals("22"))
+				{
+					/*
+					s = s.replace(",", "");
+					String[] nhoodValues = s.split(" ");
+					String locale = nhoodValues[1];			// Assume that the 2nd value is a locale - might not be, but will test.
+					String tagCountry = nhoodValues[nhoodValues.length - 1];	// Assume the last value is the country
+					*/
+				}
 			}
-		} catch (FileNotFoundException e) {
+			br.close();
+			isReady = true;
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
-			System.out.println(("The places.txt file could not be found"));
 		}
 	}
 

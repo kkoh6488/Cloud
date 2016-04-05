@@ -2,6 +2,7 @@ package Cloud;
 
 import java.io.File;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.IntWritable;
@@ -16,12 +17,16 @@ public class LocalityDriver {
 		
 		Configuration conf = new Configuration();
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		
+
 		if (otherArgs.length != 3) {
 			System.err.println("Usage: TagDriver <in> <places.txt-path> <out>");
 			System.exit(2);
 		}
 
+		//conf.addResource(new Path(args[1]));
+		Path path = new Path(args[1]);
+		//FileSystem fs = path.getFileSystem(conf);
+		/*
 		File f = new File(otherArgs[1]);
 		if (!f.exists())
 		{
@@ -35,7 +40,7 @@ public class LocalityDriver {
 			//System.out.println(pj.GetLocales().);
 		}
 		System.exit(2);
-
+		*/
 		// Set the path for places.txt
 		conf.set("places-path", otherArgs[1]);
 

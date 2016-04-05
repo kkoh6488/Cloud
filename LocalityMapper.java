@@ -1,5 +1,6 @@
 package Cloud;
 
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -20,6 +21,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 		@Override
 		protected void setup(Context context) throws IOException, InterruptedException {
 	        Configuration conf = context.getConfiguration();
+			/*
 			File f = new File(conf.get("places-path"));
 			if (!f.exists())
 			{
@@ -27,7 +29,10 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 				System.exit(2);
 			}
 			String filepath = ((FileSplit) context.getInputSplit()).getPath().toString();
-			pJoiner = new PlaceJoiner(conf.get("places-path"));
+			*/
+			Path p = new Path(conf.get("places-path"));
+			FileSystem fs = FileSystem.get(conf);
+			pJoiner = new PlaceJoiner(conf.get("places-path"), fs.open(p));
 	    }
 		
 		@Override
