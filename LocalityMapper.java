@@ -52,17 +52,22 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			
 			String countryName = "\t \t";
 			String localityName = "\t \t";
+			String[] data;
 			if (pJoiner.IsIdForLocale(placeId))
 			{
-				String[] data = pJoiner.GetPlaceDataByLocaleID(placeId);
+				data = pJoiner.GetPlaceDataByLocaleID(placeId);
 				countryName = data[0];
 				localityName = data[1];
 			}
-			/*
-			else
+
+			else if (pJoiner.IsIdForKnownNeighborhood(placeId))
 			{
-				
+				data = pJoiner.GetPlaceDataByNeighborhoodId(placeId);
+				countryName = data[0];
+				localityName = data[1];
+				neighborhood = data[2];
 			}
+			/*
 			// Check tags for neighborhood
 			if (tags.length() > 0)
 			{
@@ -74,7 +79,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 					context.write(word, owner);
 				}
 			}
-			*/				
+			*/
 			
 			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, ownerId);
 			context.write(localeKey, one);

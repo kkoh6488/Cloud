@@ -76,6 +76,11 @@ public class LocalityKey implements WritableComparable {
 	{
 		return localityName.toString();
 	}
+
+    public String getCountry()
+    {
+        return countryName.toString();
+    }
 	
 	@Override
 	//overriding default readFields method. 

@@ -1,5 +1,6 @@
 package Cloud;
 
+import javafx.util.Pair;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSInputStream;
 
@@ -15,10 +16,12 @@ public class PlaceJoiner {
 	private HashMap<String, String> idToLocale;
 	
 	// Stores <localename, placeID>
-	private HashMap<String, String> localeToID;
+	private HashMap<Pair<String, String>, String> localeToID;
 	
 	// Stores <neighborhoodname, localeID>
-	private HashMap<String, String> neighborhoodLocales;
+	private HashMap<String, String> neighborhoodToPlace;
+
+	private HashMap<String, String> neighborhoodIDToName;
 	
 	// Stores <localeID, countryName>
 	private HashMap<String, String> localeIDToCountry;
@@ -26,14 +29,16 @@ public class PlaceJoiner {
 	private String[] tempResult;
 
 	private boolean isReady = false;
+
+	private Pair<String, String> placePair;
 	
 	public PlaceJoiner(String path, FSDataInputStream fs)
 	{
 		filepath = path;
 		idToLocale = new HashMap<String, String>();
-		localeToID = new HashMap<String, String>();
+		localeToID = new HashMap<Pair<String, String>, String>();
 		localeIDToCountry = new HashMap<String, String>();
-		neighborhoodLocales = new HashMap<String, String>();
+		neighborhoodToPlace = new HashMap<String, String>();
 		tempResult = new String[3];
 		LoadPlacesIntoMemory(fs);
 	}
@@ -62,17 +67,25 @@ public class PlaceJoiner {
 				}
 				if (placeType.equals("7"))
 				{
+					placePair = new Pair<String, String>(placeName, country);
 					idToLocale.put(placeID, placeName);
 					localeIDToCountry.put(placeID, country);
+					localeToID.put(placePair, placeID);
 				}
 				else if (placeType.equals("22"))
 				{
-					/*
+					// Try to map neighbourhoods to their locale ID.
+
 					s = s.replace(",", "");
 					String[] nhoodValues = s.split(" ");
-					String locale = nhoodValues[1];			// Assume that the 2nd value is a locale - might not be, but will test.
-					String tagCountry = nhoodValues[nhoodValues.length - 1];	// Assume the last value is the country
-					*/
+					String locale = nhoodValues[1];										// Assume that the 2nd value is a locale - might not be, but will test.
+					String tagCountry = nhoodValues[nhoodValues.length - 1];			// Assume the last value is the country
+					placePair = new Pair<String, String>(locale, tagCountry);
+					if (localeToID.containsKey(placePair))
+					{
+						neighborhoodToPlace.put(placeID, localeToID.get(placePair));
+						neighborhoodIDToName.put(placeID, placeName);
+					}
 				}
 			}
 			br.close();
@@ -96,7 +109,25 @@ public class PlaceJoiner {
 	{
 		return (idToLocale.containsKey(id));
 	}
-	
+
+	/* Whether the given ID belongs to a neighbourhood which was successfully
+	 * mapped to a locale.
+	 */
+	public boolean IsIdForKnownNeighborhood(String id)
+	{
+		return neighborhoodToPlace.containsKey(id);
+	}
+
+	// Return [countryname, localename, neighborhoodname]
+	public String[] GetPlaceDataByNeighborhoodId(String neighborhoodId)
+	{
+		String tempPlaceId = neighborhoodToPlace.get(neighborhoodId);
+		tempResult[0] = localeIDToCountry.get(tempPlaceId);
+		tempResult[1] = idToLocale.get(tempPlaceId);
+		tempResult[2] = neighborhoodIDToName.get(neighborhoodId);
+		return tempResult;
+	}
+
 	/* Gets the place data for a given placeid.
 	 * 
 	 */

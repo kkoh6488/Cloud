@@ -17,7 +17,7 @@ public class LocalityReducer extends Reducer<LocalityKey, IntWritable, Text, Int
 			count += val.get();
 		}
 
-		print.set(key.toString() + "\tl:" + key.getLocale() +"\t");
+		print.set(key.getCountry() + "\t" + key.toString());
 		context.write(print, new IntWritable(count));
 	}
 }
