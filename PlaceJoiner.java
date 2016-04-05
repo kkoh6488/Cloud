@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class PlaceJoiner {
 	
@@ -118,5 +119,14 @@ public class PlaceJoiner {
 	{
 		return null;
 	}
-	
+
+	public int GetLocaleCount()
+	{
+		return idToLocale.size();
+	}
+
+	public Iterator<String> GetLocales()
+	{
+		return idToLocale.values().iterator();
+	}
 }
