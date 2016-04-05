@@ -16,7 +16,10 @@ public class LocalityKey implements WritableComparable {
 	private Text countryName = new Text();
 	private Text neighborhoodName = new Text();
 	private Text ownerID = new Text();
-	
+
+	// Default constructor
+	public LocalityKey() {}
+
 	public LocalityKey(String placeId, String country, String locality, String neighborhood, String owner)
 	{
 		localityName.set(locality);

@@ -33,10 +33,10 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			String ownerId = dataArray[1];
 			String tags = dataArray[2];
 			String placeId = dataArray[5];
-			String neighborhood = null;
+			String neighborhood = "\t \t";
 			
-			String countryName = null; 
-			String localityName = null;
+			String countryName = "\t \t";
+			String localityName = "\t \t";
 			if (pJoiner.IsIdForLocale(placeId))
 			{
 				String[] data = pJoiner.GetPlaceDataByLocaleID(placeId);

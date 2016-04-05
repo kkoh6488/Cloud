@@ -68,11 +68,12 @@ public class PlaceJoiner {
 					}
 					else if (placeType.equals("22"))
 					{
+						/*
 						s = s.replace(",", "");
 						String[] nhoodValues = s.split(" ");
 						String locale = nhoodValues[1];			// Assume that the 2nd value is a locale - might not be, but will test.
 						String tagCountry = nhoodValues[nhoodValues.length - 1];	// Assume the last value is the country
-
+						*/
 					}
 				}
 			} catch (IOException e) 
@@ -101,7 +102,7 @@ public class PlaceJoiner {
 		// Return [countryname, localename, neighborhoodname]
 		tempResult[0] = localeIDToCountry.get(id);
 		tempResult[1] = idToLocale.get(id);
-		tempResult[2] = null;
+		tempResult[2] = "\t \t";
 		return tempResult;
 	}
 	
