@@ -1,9 +1,11 @@
 package Cloud;
 
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapred.FileSplit;
 
 import java.io.IOException;
 
@@ -17,6 +19,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 		@Override
 		protected void setup(Context context) throws IOException, InterruptedException {
 	        Configuration conf = context.getConfiguration();
+			String filepath = ((FileSplit) context.getInputSplit()).getPath().toString();
 			pJoiner = new PlaceJoiner(conf.get("places-path"));
 	    }
 		

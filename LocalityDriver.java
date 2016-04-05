@@ -28,6 +28,9 @@ public class LocalityDriver {
 			System.err.println("Place.txt not found");
 			System.exit(2);
 		}
+		PlaceJoiner pj = new PlaceJoiner(otherArgs[1]);
+		System.out.println(pj.IsIdForLocale("xbxI9VGYA5oZH8tLJA"));
+		System.exit(2);
 
 		// Set the path for places.txt
 		conf.set("places-path", otherArgs[1]);
