@@ -7,7 +7,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class LocalityReducer extends Reducer<LocalityKey, IntWritable, Text, IntWritable> {
 
-	private static Text print = new Text();
+	private Text print = new Text();
 	
 	@Override
 	public void reduce(LocalityKey key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {

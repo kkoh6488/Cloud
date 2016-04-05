@@ -32,7 +32,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			}
 			String ownerId = dataArray[1];
 			String tags = dataArray[2];
-			String placeId = dataArray[5];
+			String placeId = dataArray[4];
 			String neighborhood = "\t \t";
 			
 			String countryName = "\t \t";
