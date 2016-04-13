@@ -10,11 +10,13 @@ import org.apache.hadoop.mapred.FileSplit;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
 public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritable> {
 		private PlaceJoiner pJoiner;
 		private LocalityKey localeKey;
+		private Map<LocalityKey, Integer> localeCounts;
 
 		private static final IntWritable one = new IntWritable(1);
 
@@ -46,7 +48,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 				return; // don't emit anything
 			}
 			String ownerId = dataArray[1];
-			String tags = dataArray[2];
+			//String tags = dataArray[2];
 			String placeId = dataArray[4];
 			String neighborhood = "\t \t";
 			
@@ -82,7 +84,23 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			*/
 			
 			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, ownerId);
-			context.write(localeKey, one);
+			if (localeCounts.containsKey(localeKey))
+			{
+				localeCounts.put(localeKey, localeCounts.get(localeKey) + 1);
+			}
+			else
+			{
+				localeCounts.put(localeKey, 1);
+			}
+			//context.write(localeKey, one);
 			//context.write(placeId, new IntWritable(1));
 		}
+
+	@Override
+	protected void cleanup(Context context) throws IOException, InterruptedException {
+		for (LocalityKey lk : localeCounts.keySet())
+		{
+			context.write(localeKey, new IntWritable(localeCounts.get(lk)));
+		}
+	}
 }

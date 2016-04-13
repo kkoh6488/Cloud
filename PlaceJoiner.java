@@ -74,16 +74,31 @@ public class PlaceJoiner {
 				}
 				else if (placeType.equals("22"))
 				{
-					// Try to map neighbourhoods to their locale ID.
+					// Try to map neighbourhoods to their locale ID using the place name.
+					// Format is : Suzaku 5 Chome, Dazaifu-shi, Fukuoka Prefecture, JP, Japan
+					// Problem!
+					// JP, Japan -> this might cause problems mapping to a locale
 
+					int firstcomma = placeName.indexOf(',');
+					String neighbourhood = placeName.substring(0, firstcomma);
+					String locale = placeName.substring(firstcomma + 2);
+					placePair = new Pair<String, String>(locale, country);
+					/*
 					s = s.replace(",", "");
 					String[] nhoodValues = s.split(" ");
 					String locale = nhoodValues[1];										// Assume that the 2nd value is a locale - might not be, but will test.
 					String tagCountry = nhoodValues[nhoodValues.length - 1];			// Assume the last value is the country
 					placePair = new Pair<String, String>(locale, tagCountry);
+					*/
 					if (localeToID.containsKey(placePair))
 					{
 						neighborhoodToPlace.put(placeID, localeToID.get(placePair));
+						neighborhoodIDToName.put(placeID, placeName);
+					}
+					else	// Create a new locale
+					{
+						localeToID.put(placePair, placeID);
+						neighborhoodToPlace.put(placeID, placeID);
 						neighborhoodIDToName.put(placeID, placeName);
 					}
 				}
