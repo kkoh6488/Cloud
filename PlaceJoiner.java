@@ -1,8 +1,6 @@
 package Cloud;
 
-import javafx.util.Pair;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSInputStream;
 
 import java.io.*;
 import java.util.HashMap;
@@ -16,7 +14,7 @@ public class PlaceJoiner {
 	private HashMap<String, String> idToLocale;
 	
 	// Stores <localename, placeID>
-	private HashMap<Pair<String, String>, String> localeToID;
+	private HashMap<PlacePair, String> localeToID;
 	
 	// Stores <neighborhoodname, localeID>
 	private HashMap<String, String> neighborhoodToPlace;
@@ -30,13 +28,13 @@ public class PlaceJoiner {
 
 	private boolean isReady = false;
 
-	private Pair<String, String> placePair;
+	private PlacePair placePair;
 	
 	public PlaceJoiner(String path, FSDataInputStream fs)
 	{
 		filepath = path;
 		idToLocale = new HashMap<String, String>();
-		localeToID = new HashMap<Pair<String, String>, String>();
+		localeToID = new HashMap<PlacePair, String>();
 		localeIDToCountry = new HashMap<String, String>();
 		neighborhoodToPlace = new HashMap<String, String>();
 		tempResult = new String[3];
@@ -67,7 +65,7 @@ public class PlaceJoiner {
 				}
 				if (placeType.equals("7"))
 				{
-					placePair = new Pair<String, String>(placeName, country);
+					placePair = new PlacePair(placeName, country);
 					idToLocale.put(placeID, placeName);
 					localeIDToCountry.put(placeID, country);
 					localeToID.put(placePair, placeID);
@@ -82,7 +80,7 @@ public class PlaceJoiner {
 					int firstcomma = placeName.indexOf(',');
 					String neighbourhood = placeName.substring(0, firstcomma);
 					String locale = placeName.substring(firstcomma + 2);
-					placePair = new Pair<String, String>(locale, country);
+					placePair = new PlacePair(locale, country);
 					/*
 					s = s.replace(",", "");
 					String[] nhoodValues = s.split(" ");

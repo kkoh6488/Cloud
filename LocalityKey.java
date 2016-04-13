@@ -48,7 +48,7 @@ public class LocalityKey implements WritableComparable {
 	@Override
 	public String toString()
 	{
-        if (localityName.toString().length() > 5)
+        if (localityName.toString() != " \t ")
         {
             return localityName.toString();
         }
