@@ -30,15 +30,32 @@ public class PlaceJoiner {
 
 	private PlacePair placePair;
 	
-	public PlaceJoiner(String path, FSDataInputStream fs)
-	{
+	public PlaceJoiner(String path, FSDataInputStream fs) {
 		filepath = path;
+		InitialiseStructs();
+		LoadPlacesIntoMemory(fs);
+	}
+
+	public PlaceJoiner(String path) {
+		filepath = path;
+		InitialiseStructs();
+		try {
+			FileReader fr = new FileReader(filepath);
+			LoadPlacesIntoMemory(fr);
+		}
+		catch (FileNotFoundException e){
+			System.out.println("Places file was not found");
+		}
+	}
+
+	void InitialiseStructs()
+	{
 		idToLocale = new HashMap<String, String>();
 		localeToID = new HashMap<PlacePair, String>();
 		localeIDToCountry = new HashMap<String, String>();
 		neighborhoodToLocaleID = new HashMap<String, String>();
-		tempResult = new String[3];
-		LoadPlacesIntoMemory(fs);
+		neighborhoodIDToNBName = new HashMap<String, String>();
+				tempResult = new String[3];
 	}
 	
 	/* Read each line of the places file and load locales and neighborhoods into memory.
@@ -49,6 +66,76 @@ public class PlaceJoiner {
 	{
 		BufferedReader br;
 		br = new BufferedReader(new InputStreamReader(fs));
+		String s;
+		try
+		{
+			while ((s = br.readLine()) != null)
+			{
+				String[] values = s.split("\t");
+				String placeID = values[0];
+				String placeName = values[4];
+				String placeType = values[5];
+				String country = placeName.substring(placeName.lastIndexOf(",") + 2);
+				if (values.length < 7)
+				{
+					continue;
+				}
+				if (placeType.equals("7"))
+				{
+					placePair = new PlacePair(placeName, country);
+					idToLocale.put(placeID, placeName);
+					localeIDToCountry.put(placeID, country);
+					localeToID.put(placePair, placeID);
+				}
+				else if (placeType.equals("22"))
+				{
+					// Try to map neighbourhoods to their locale ID using the place name.
+					// Format is : Suzaku 5 Chome, Dazaifu-shi, Fukuoka Prefecture, JP, Japan
+					// Problem!
+					// JP, Japan -> this might cause problems mapping to a locale
+
+					int firstcomma = placeName.indexOf(',');
+					String neighbourhood = placeName.substring(0, firstcomma);
+					String locale = placeName.substring(firstcomma + 2);
+					placePair = new PlacePair(locale, country);
+					/*
+					s = s.replace(",", "");
+					String[] nhoodValues = s.split(" ");
+					String locale = nhoodValues[1];										// Assume that the 2nd value is a locale - might not be, but will test.
+					String tagCountry = nhoodValues[nhoodValues.length - 1];			// Assume the last value is the country
+					placePair = new Pair<String, String>(locale, tagCountry);
+					*/
+					if (localeToID.containsKey(placePair))
+					{
+						neighborhoodToLocaleID.put(placeID, localeToID.get(placePair));	// Want to map neighborhood ID to a locale ID for later use
+						neighborhoodIDToNBName.put(placeID, placeName);					// Map this ID to a neighborhood name for later use
+					}
+					else	// This neighborhood doesn't have an existing locale - make a new one
+					{
+						// Making a new locale
+						localeToID.put(placePair, placeID);
+						localeIDToCountry.put(placeID, country);
+						idToLocale.put(placeID, locale);
+
+						// Now enter in neighbourhood
+						neighborhoodToLocaleID.put(placeID, placeID);
+						neighborhoodIDToNBName.put(placeID, placeName);
+					}
+				}
+			}
+			br.close();
+			isReady = true;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void LoadPlacesIntoMemory(FileReader fr)
+	{
+		BufferedReader br;
+		br = new BufferedReader(fr);
 		String s;
 		try
 		{
