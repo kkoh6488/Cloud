@@ -17,9 +17,9 @@ public class PlaceJoiner {
 	private HashMap<PlacePair, String> localeToID;
 	
 	// Stores <neighborhoodname, localeID>
-	private HashMap<String, String> neighborhoodToPlace;
+	private HashMap<String, String> neighborhoodToLocaleID;
 
-	private HashMap<String, String> neighborhoodIDToName;
+	private HashMap<String, String> neighborhoodIDToNBName;
 	
 	// Stores <localeID, countryName>
 	private HashMap<String, String> localeIDToCountry;
@@ -36,7 +36,7 @@ public class PlaceJoiner {
 		idToLocale = new HashMap<String, String>();
 		localeToID = new HashMap<PlacePair, String>();
 		localeIDToCountry = new HashMap<String, String>();
-		neighborhoodToPlace = new HashMap<String, String>();
+		neighborhoodToLocaleID = new HashMap<String, String>();
 		tempResult = new String[3];
 		LoadPlacesIntoMemory(fs);
 	}
@@ -90,14 +90,19 @@ public class PlaceJoiner {
 					*/
 					if (localeToID.containsKey(placePair))
 					{
-						neighborhoodToPlace.put(placeID, localeToID.get(placePair));
-						neighborhoodIDToName.put(placeID, placeName);
+						neighborhoodToLocaleID.put(placeID, localeToID.get(placePair));	// Want to map neighborhood ID to a locale ID for later use
+						neighborhoodIDToNBName.put(placeID, placeName);					// Map this ID to a neighborhood name for later use
 					}
-					else	// Create a new locale
+					else	// This neighborhood doesn't have an existing locale - make a new one
 					{
+						// Making a new locale
 						localeToID.put(placePair, placeID);
-						neighborhoodToPlace.put(placeID, placeID);
-						neighborhoodIDToName.put(placeID, placeName);
+						localeIDToCountry.put(placeID, country);
+						idToLocale.put(placeID, locale);
+
+						// Now enter in neighbourhood
+						neighborhoodToLocaleID.put(placeID, placeID);
+						neighborhoodIDToNBName.put(placeID, placeName);
 					}
 				}
 			}
@@ -128,16 +133,16 @@ public class PlaceJoiner {
 	 */
 	public boolean IsIdForKnownNeighborhood(String id)
 	{
-		return neighborhoodToPlace.containsKey(id);
+		return neighborhoodToLocaleID.containsKey(id);
 	}
 
 	// Return [countryname, localename, neighborhoodname]
 	public String[] GetPlaceDataByNeighborhoodId(String neighborhoodId)
 	{
-		String tempPlaceId = neighborhoodToPlace.get(neighborhoodId);
+		String tempPlaceId = neighborhoodToLocaleID.get(neighborhoodId);
 		tempResult[0] = localeIDToCountry.get(tempPlaceId);
 		tempResult[1] = idToLocale.get(tempPlaceId);
-		tempResult[2] = neighborhoodIDToName.get(neighborhoodId);
+		tempResult[2] = neighborhoodIDToNBName.get(neighborhoodId);
 		return tempResult;
 	}
 
