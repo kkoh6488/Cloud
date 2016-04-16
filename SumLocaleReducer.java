@@ -17,8 +17,10 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
 
     @Override
     public void reduce(SummedPlaceKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-        tempPair = new PlacePair(placeKey.getCountry(), placeKey.getLocale());
         String country = placeKey.getCountry();
+        String locale = placeKey.getLocale();
+        tempPair = new PlacePair(locale, country);
+
         // If it's a neighbourhood - store the top result per locality
         if (!placeKey.getNeighbourhood().equals("#")) {
             if (!topNeighbourhoods.containsKey(tempPair)) {         // Only get the first one - since they are sorted
@@ -34,14 +36,14 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
                     return;
                 }
             } else {
-                topCounts.put(country, 1);
+                topCounts.put(country, 0);
             }
             if (topNeighbourhoods.containsKey(tempPair)) {
                 SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
-                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":"
+                result = country + "\t{(" + locale + ":"
                         + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers() + ")};";
             } else {
-                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":" + placeKey.getUniqueUsers()+ ")};";
+                result = country + "\t{(" + locale + ":" + placeKey.getUniqueUsers()+ ")};";
             }
             output.set(result);
             context.write(output, empty);
