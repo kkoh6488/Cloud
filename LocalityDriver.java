@@ -45,11 +45,22 @@ public class LocalityDriver {
 		// Set the path for places.txt
 		//conf.set("places-path", otherArgs[1]);
 
+		// Check if output paths are in use already
+		FileSystem fs = FileSystem.get(conf);
+		Path countTempPath = new Path("userCountTemp");
+		Path sortOutputPath = new Path(otherArgs[2]);
+		if (fs.exists(countTempPath)) {
+			fs.delete(countTempPath, true);
+		}
+		if (fs.exists(sortOutputPath)) {
+			fs.delete(sortOutputPath, true);
+		}
+
 		// Count the unique users per place ID
 		Job userCountJob = new Job(conf, "user count");
 		userCountJob.setJarByClass(LocalityDriver.class);
 		TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
-		TextOutputFormat.setOutputPath(userCountJob, new Path("userCountTemp"));
+		TextOutputFormat.setOutputPath(userCountJob, countTempPath);
 		userCountJob.setNumReduceTasks(1);
 
 		userCountJob.setMapperClass(UserCountMapper.class);
@@ -68,8 +79,8 @@ public class LocalityDriver {
 		job.addCacheFile(new Path(otherArgs[1]).toUri());
 		job.setNumReduceTasks(1); // we use three reducers, you may modify the number
 		job.setJarByClass(LocalityDriver.class);
-		TextInputFormat.addInputPath(job, new Path("userCountTemp"));
-		TextOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
+		TextInputFormat.addInputPath(job, countTempPath);
+		TextOutputFormat.setOutputPath(job, sortOutputPath);
 
 		job.setMapperClass(LocalityMapper.class);
 		job.setReducerClass(LocalityReducer.class);
