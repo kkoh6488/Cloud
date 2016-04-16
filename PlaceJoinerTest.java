@@ -62,4 +62,18 @@ public class PlaceJoinerTest extends TestCase {
         assertEquals("#", results[2]);
     }
 
+    public void testFakeLocaleData() throws Exception {
+        String[] results = pj.GetPlaceDataByLocaleID("placeID-LocA");
+        assertEquals("CountryA", results[0]);
+        assertEquals("LocaleA", results[1]);
+        assertEquals("#", results[2]);
+    }
+
+    public void testFakeNeighbourhoodData() throws Exception {
+        String[] results = pj.GetPlaceDataByNeighborhoodId("placeID-NeighA");
+        assertEquals("CountryA", results[0]);
+        assertEquals("LocaleA", results[1]);
+        assertEquals("NeighA", results[2]);
+    }
+
 }

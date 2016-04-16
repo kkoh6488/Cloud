@@ -145,15 +145,15 @@ public class PlaceJoiner {
 			while ((s = br.readLine()) != null)
 			{
 				String[] values = s.split("\t");
+				if (values.length < 7)
+				{
+					continue;		//	Place row isn't valid
+				}
 				String placeID = values[0];
 				String placeName = values[4];
 				String placeType = values[5];
 				int lastCommaIndex = placeName.lastIndexOf(",");
 				String country = placeName.substring(lastCommaIndex + 2);
-				if (values.length < 7)
-				{
-					continue;
-				}
 				if (placeType.equals("7"))
 				{
 					String locale = placeName.substring(0, placeName.indexOf(","));
