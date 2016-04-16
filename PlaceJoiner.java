@@ -80,10 +80,13 @@ public class PlaceJoiner {
 				}
 				if (placeType.equals("7"))
 				{
-					placePair = new PlacePair(placeName, country);
-					idToLocaleName.put(placeID, placeName);
+					String locale = placeName.substring(0, placeName.indexOf(','));
+					placePair = new PlacePair(locale, country);
+					//if (!localePairToID.containsKey(placePair)) {
+					idToLocaleName.put(placeID, locale);
 					localeIDToCountry.put(placeID, country);
 					localePairToID.put(placePair, placeID);
+					//}
 				}
 				else if (placeType.equals("22"))
 				{
@@ -91,10 +94,6 @@ public class PlaceJoiner {
 					// Format is : Suzaku 5 Chome, Dazaifu-shi, Fukuoka Prefecture, JP, Japan
 					// Problem!
 					// JP, Japan -> this might cause problems mapping to a locale
-
-					// Try to associate a neighbourhood with a locale by looking at second comma value (ie locale)
-					// with the country (last comma value).
-					// eg Should extract (Dazaifu-shi, Japan) as the place pair.
 
 					int firstcomma = placeName.indexOf(',');
 					int secondcomma = placeName.indexOf(',', firstcomma + 2);
@@ -111,7 +110,7 @@ public class PlaceJoiner {
 					if (localePairToID.containsKey(placePair))
 					{
 						neighborhoodIDToPlacePair.put(placeID, placePair);	// Want to map neighborhood ID to a locale ID for later use
-						neighborhoodIDToNBName.put(placeID, placeName);					// Map this ID to a neighborhood name for later use
+						neighborhoodIDToNBName.put(placeID, neighbourhood);					// Map this ID to a neighborhood name for later use
 					}
 					else	// This neighborhood doesn't have an existing locale - make a new one
 					{
@@ -122,7 +121,7 @@ public class PlaceJoiner {
 
 						// Now enter in neighbourhood
 						neighborhoodIDToPlacePair.put(placeID, placePair);
-						neighborhoodIDToNBName.put(placeID, placeName);
+						neighborhoodIDToNBName.put(placeID, neighbourhood);
 					}
 				}
 			}
