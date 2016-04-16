@@ -35,7 +35,6 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
         if (!localeSum.containsKey(placePair) && !neighbourhood.equals("#")) {
             localeSum.put(placePair, uniqueCount);
         }
-
         else if (!neighbourhood.equals("#")) {
             count.set(uniqueCount);
             context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);

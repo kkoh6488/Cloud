@@ -2,7 +2,6 @@ package Cloud;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -10,6 +9,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text, Text> {
     HashMap<PlacePair, SummedPlaceKey> topNeighbourhoods = new HashMap<PlacePair, SummedPlaceKey>();
+    HashMap<String, Integer> topCounts = new HashMap<String, Integer>();    // Gets the top N per country
     PlacePair tempPair;
     Text empty = new Text();
     Text output = new Text();
@@ -18,11 +18,24 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
     @Override
     public void reduce(SummedPlaceKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
         tempPair = new PlacePair(placeKey.getCountry(), placeKey.getLocale());
+        String country = placeKey.getCountry();
+        // If it's a neighbourhood - store the top result per locality
         if (!placeKey.getNeighbourhood().equals("#")) {
             if (!topNeighbourhoods.containsKey(tempPair)) {         // Only get the first one - since they are sorted
                 topNeighbourhoods.put(tempPair, placeKey);
             }
         } else {
+            // If it's a locale - get the top 10 for each country. Otherwise, skip this locale.
+            if (topCounts.containsKey(country)) {
+                int numLocs = topCounts.get(country);
+                if (numLocs < 10) {
+                    topCounts.put(country, numLocs + 1);
+                } else {
+                    return;
+                }
+            } else {
+                topCounts.put(country, 1);
+            }
             if (topNeighbourhoods.containsKey(tempPair)) {
                 SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
                 result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":"
