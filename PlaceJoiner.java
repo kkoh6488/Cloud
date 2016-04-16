@@ -11,13 +11,13 @@ public class PlaceJoiner {
 	private String filepath;
 	
 	// Stores <placeid, localename>
-	private HashMap<String, String> idToLocale;
+	private HashMap<String, String> idToLocaleName;
 	
 	// Stores <localename, placeID>
-	private HashMap<PlacePair, String> localeToID;
+	private HashMap<PlacePair, String> localePairToID;
 	
 	// Stores <neighborhoodname, localeID>
-	private HashMap<String, String> neighborhoodToLocaleID;
+	private HashMap<String, PlacePair> neighborhoodIDToPlacePair;
 
 	private HashMap<String, String> neighborhoodIDToNBName;
 	
@@ -49,10 +49,10 @@ public class PlaceJoiner {
 
 	void InitialiseStructs()
 	{
-		idToLocale = new HashMap<String, String>();
-		localeToID = new HashMap<PlacePair, String>();
+		idToLocaleName = new HashMap<String, String>();
+		localePairToID = new HashMap<PlacePair, String>();
 		localeIDToCountry = new HashMap<String, String>();
-		neighborhoodToLocaleID = new HashMap<String, String>();
+		neighborhoodIDToPlacePair = new HashMap<String, PlacePair>();
 		neighborhoodIDToNBName = new HashMap<String, String>();
 		tempResult = new String[3];
 	}
@@ -81,9 +81,9 @@ public class PlaceJoiner {
 				if (placeType.equals("7"))
 				{
 					placePair = new PlacePair(placeName, country);
-					idToLocale.put(placeID, placeName);
+					idToLocaleName.put(placeID, placeName);
 					localeIDToCountry.put(placeID, country);
-					localeToID.put(placePair, placeID);
+					localePairToID.put(placePair, placeID);
 				}
 				else if (placeType.equals("22"))
 				{
@@ -92,9 +92,14 @@ public class PlaceJoiner {
 					// Problem!
 					// JP, Japan -> this might cause problems mapping to a locale
 
+					// Try to associate a neighbourhood with a locale by looking at second comma value (ie locale)
+					// with the country (last comma value).
+					// eg Should extract (Dazaifu-shi, Japan) as the place pair.
+
 					int firstcomma = placeName.indexOf(',');
+					int secondcomma = placeName.indexOf(',', firstcomma + 2);
 					String neighbourhood = placeName.substring(0, firstcomma);
-					String locale = placeName.substring(firstcomma + 2);
+					String locale = placeName.substring(firstcomma + 2, secondcomma);
 					placePair = new PlacePair(locale, country);
 					/*
 					s = s.replace(",", "");
@@ -103,20 +108,20 @@ public class PlaceJoiner {
 					String tagCountry = nhoodValues[nhoodValues.length - 1];			// Assume the last value is the country
 					placePair = new Pair<String, String>(locale, tagCountry);
 					*/
-					if (localeToID.containsKey(placePair))
+					if (localePairToID.containsKey(placePair))
 					{
-						neighborhoodToLocaleID.put(placeID, localeToID.get(placePair));	// Want to map neighborhood ID to a locale ID for later use
+						neighborhoodIDToPlacePair.put(placeID, placePair);	// Want to map neighborhood ID to a locale ID for later use
 						neighborhoodIDToNBName.put(placeID, placeName);					// Map this ID to a neighborhood name for later use
 					}
 					else	// This neighborhood doesn't have an existing locale - make a new one
 					{
 						// Making a new locale
-						localeToID.put(placePair, placeID);
+						localePairToID.put(placePair, placeID);
 						localeIDToCountry.put(placeID, country);
-						idToLocale.put(placeID, locale);
+						idToLocaleName.put(placeID, locale);
 
 						// Now enter in neighbourhood
-						neighborhoodToLocaleID.put(placeID, placeID);
+						neighborhoodIDToPlacePair.put(placeID, placePair);
 						neighborhoodIDToNBName.put(placeID, placeName);
 					}
 				}
@@ -150,10 +155,13 @@ public class PlaceJoiner {
 				}
 				if (placeType.equals("7"))
 				{
-					placePair = new PlacePair(placeName, country);
-					idToLocale.put(placeID, placeName);
+					String locale = placeName.substring(0, placeName.indexOf(','));
+					placePair = new PlacePair(locale, country);
+					//if (!localePairToID.containsKey(placePair)) {
+					idToLocaleName.put(placeID, locale);
 					localeIDToCountry.put(placeID, country);
-					localeToID.put(placePair, placeID);
+					localePairToID.put(placePair, placeID);
+					//}
 				}
 				else if (placeType.equals("22"))
 				{
@@ -163,8 +171,9 @@ public class PlaceJoiner {
 					// JP, Japan -> this might cause problems mapping to a locale
 
 					int firstcomma = placeName.indexOf(',');
+					int secondcomma = placeName.indexOf(',', firstcomma + 2);
 					String neighbourhood = placeName.substring(0, firstcomma);
-					String locale = placeName.substring(firstcomma + 2);
+					String locale = placeName.substring(firstcomma + 2, secondcomma);
 					placePair = new PlacePair(locale, country);
 					/*
 					s = s.replace(",", "");
@@ -173,21 +182,21 @@ public class PlaceJoiner {
 					String tagCountry = nhoodValues[nhoodValues.length - 1];			// Assume the last value is the country
 					placePair = new Pair<String, String>(locale, tagCountry);
 					*/
-					if (localeToID.containsKey(placePair))
+					if (localePairToID.containsKey(placePair))
 					{
-						neighborhoodToLocaleID.put(placeID, localeToID.get(placePair));	// Want to map neighborhood ID to a locale ID for later use
-						neighborhoodIDToNBName.put(placeID, placeName);					// Map this ID to a neighborhood name for later use
+						neighborhoodIDToPlacePair.put(placeID, placePair);	// Want to map neighborhood ID to a locale ID for later use
+						neighborhoodIDToNBName.put(placeID, neighbourhood);					// Map this ID to a neighborhood name for later use
 					}
 					else	// This neighborhood doesn't have an existing locale - make a new one
 					{
 						// Making a new locale
-						localeToID.put(placePair, placeID);
+						localePairToID.put(placePair, placeID);
 						localeIDToCountry.put(placeID, country);
-						idToLocale.put(placeID, locale);
+						idToLocaleName.put(placeID, locale);
 
 						// Now enter in neighbourhood
-						neighborhoodToLocaleID.put(placeID, placeID);
-						neighborhoodIDToNBName.put(placeID, placeName);
+						neighborhoodIDToPlacePair.put(placeID, placePair);
+						neighborhoodIDToNBName.put(placeID, neighbourhood);
 					}
 				}
 			}
@@ -210,7 +219,7 @@ public class PlaceJoiner {
 	 */
 	public boolean IsIdForLocale(String id)
 	{
-		return (idToLocale.containsKey(id));
+		return (idToLocaleName.containsKey(id));
 	}
 
 	/* Whether the given ID belongs to a neighbourhood which was successfully
@@ -218,17 +227,23 @@ public class PlaceJoiner {
 	 */
 	public boolean IsIdForKnownNeighborhood(String id)
 	{
-		return neighborhoodToLocaleID.containsKey(id);
+		return neighborhoodIDToPlacePair.containsKey(id);
 	}
 
 	// Return [countryname, localename, neighborhoodname]
 	public String[] GetPlaceDataByNeighborhoodId(String neighborhoodId)
 	{
-		String tempPlaceId = neighborhoodToLocaleID.get(neighborhoodId);
-		tempResult[0] = localeIDToCountry.get(tempPlaceId);
-		tempResult[1] = idToLocale.get(tempPlaceId);
+		PlacePair localePair = neighborhoodIDToPlacePair.get(neighborhoodId);
+		String localeId = localePairToID.get(localePair);
+		tempResult[0] = localeIDToCountry.get(localeId);
+		tempResult[1] = idToLocaleName.get(localeId);
 		tempResult[2] = neighborhoodIDToNBName.get(neighborhoodId);
 		return tempResult;
+	}
+
+	public String GetLocaleIDForNeighbourhoodID(String nID) {
+		PlacePair p = neighborhoodIDToPlacePair.get(nID);
+		return localePairToID.get(p);
 	}
 
 	/* Gets the place data for a given placeid.
@@ -238,8 +253,8 @@ public class PlaceJoiner {
 	{
 		// Return [countryname, localename, neighborhoodname]
 		tempResult[0] = localeIDToCountry.get(id);
-		tempResult[1] = idToLocale.get(id);
-		tempResult[2] = "\t \t";
+		tempResult[1] = idToLocaleName.get(id);
+		tempResult[2] = "NA";
 		return tempResult;
 	}
 	
@@ -250,11 +265,11 @@ public class PlaceJoiner {
 
 	public int GetLocaleCount()
 	{
-		return idToLocale.size();
+		return idToLocaleName.size();
 	}
 
 	public Iterator<String> GetLocales()
 	{
-		return idToLocale.values().iterator();
+		return idToLocaleName.values().iterator();
 	}
 }

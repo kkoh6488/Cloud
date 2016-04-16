@@ -32,8 +32,34 @@ public class PlaceJoinerTest extends TestCase {
     public void testGetPlaceDataByLocaleID() throws Exception {
         String[] results = pj.GetPlaceDataByLocaleID("k.N1uBGbCZTIUzrt9Q");
         assertEquals(results[0], "United Kingdom");
-        assertEquals(results[1], "Eshaness, Scotland, United Kingdom");
-        assertEquals(results[2], "\t \t");
+        assertEquals(results[1], "Eshaness");
+        assertEquals(results[2], "NA");
+    }
+
+    public void testNeighbourhoodHasLocale() throws Exception {
+        /* Test data
+        PbGNxHibCZlLO2VGzg	28580129	33.51	130.518	Suzaku 5 Chome, Dazaifu-shi, Fukuoka Prefecture, JP, Japan	22
+        /Japan/Fukuoka+Prefecture/Dazaifu-shi/Suzaku+5+Chome
+         */
+        assertEquals(true, pj.IsIdForLocale("PbGNxHibCZlLO2VGzg"));
+    }
+
+    public void testNeighbourhoodHasCorrectLocale() throws Exception {
+        assertEquals("tl._8UiYAJ21coEG", pj.GetLocaleIDForNeighbourhoodID("PbGNxHibCZlLO2VGzg"));
+    }
+
+    public void testNeighbourhoodPlaceData() throws Exception {
+        String[] results = pj.GetPlaceDataByNeighborhoodId("PbGNxHibCZlLO2VGzg");
+        assertEquals("Japan", results[0]);
+        assertEquals("Dazaifu-shi", results[1]);
+        assertEquals("Suzaku 5 Chome", results[2]);
+    }
+
+    public void testLocalePlaceData() throws Exception {
+        String[] results = pj.GetPlaceDataByLocaleID("tl._8UiYAJ21coEG");
+        assertEquals("Japan", results[0]);
+        assertEquals("Dazaifu-shi", results[1]);
+        assertEquals("NA", results[2]);
     }
 
 }

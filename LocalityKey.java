@@ -16,7 +16,7 @@ public class LocalityKey implements WritableComparable {
 	private Text placeID = new Text();
 	private Text countryName = new Text();
 	private Text neighborhoodName = new Text();
-	private IntWritable uniqueUsers;
+	private IntWritable uniqueUsers = new IntWritable();
 
 	// Default constructor
 	public LocalityKey() {}
@@ -47,7 +47,7 @@ public class LocalityKey implements WritableComparable {
 		// Sort based on country name, then by number of unique users
 		int compare = countryName.compareTo(lk.countryName);
 		if (compare == 0) {
-			return lk.compareTo(uniqueUsers);
+			return lk.uniqueUsers.compareTo(uniqueUsers);
 		}
 		return compare;
         //return -1;
