@@ -2,6 +2,7 @@ package Cloud;
 
 import java.io.File;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -42,14 +43,33 @@ public class LocalityDriver {
 		System.exit(2);
 		*/
 		// Set the path for places.txt
-		conf.set("places-path", otherArgs[1]);
+		//conf.set("places-path", otherArgs[1]);
 
-		Job job = new Job(conf, "tag owner inverted list");
+		// Count the unique users per place ID
+		Job userCountJob = new Job(conf, "user count");
+		userCountJob.setJarByClass(LocalityDriver.class);
+		TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
+		TextOutputFormat.setOutputPath(userCountJob, new Path(otherArgs[2]));
+		userCountJob.setNumReduceTasks(1);
+
+		userCountJob.setMapperClass(UserCountMapper.class);
+		userCountJob.setReducerClass(UserCountReducer.class);
+
+		userCountJob.setMapOutputKeyClass(Text.class);
+		userCountJob.setMapOutputValueClass(IntWritable.class);
+
+		userCountJob.setOutputKeyClass(Text.class);
+		userCountJob.setOutputValueClass(IntWritable.class);
+
+		userCountJob.waitForCompletion(true);
+
+		/*
+		// Job 2
+		Job job = new Job(conf, "place");
+		job.addCacheFile(new Path(otherArgs[1]).toUri());
 		job.setNumReduceTasks(1); // we use three reducers, you may modify the number
-		
 		job.setJarByClass(LocalityDriver.class);
-
-		TextInputFormat.addInputPath(job, new Path(otherArgs[0]));
+		TextInputFormat.addInputPath(job, new Path("userCountTemp"));
 		TextOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
 
 		job.setMapperClass(LocalityMapper.class);
@@ -62,5 +82,6 @@ public class LocalityDriver {
 		job.setOutputValueClass(IntWritable.class);
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		*/
 	}
 }

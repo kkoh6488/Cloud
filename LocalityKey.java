@@ -15,18 +15,16 @@ public class LocalityKey implements WritableComparable {
 	private Text placeID = new Text();
 	private Text countryName = new Text();
 	private Text neighborhoodName = new Text();
-	private Text ownerID = new Text();
 
 	// Default constructor
 	public LocalityKey() {}
 
-	public LocalityKey(String placeId, String country, String locality, String neighborhood, String owner)
+	public LocalityKey(String placeId, String country, String locality, String neighborhood)
 	{
 		localityName.set(locality);
 		placeID.set(placeId);
 		countryName.set(country);
 		neighborhoodName.set(neighborhood);
-		ownerID.set(owner);
 	}
 
     @Override
@@ -90,7 +88,6 @@ public class LocalityKey implements WritableComparable {
 	    placeID.readFields( in );
 		neighborhoodName.readFields( in );
 		countryName.readFields( in );
-		ownerID.readFields( in );
 	}
 
 	@Override
@@ -100,6 +97,5 @@ public class LocalityKey implements WritableComparable {
 		placeID.write( out );
 		neighborhoodName.write( out );
 		countryName.write( out );
-		ownerID.write( out );
   	}
 }

@@ -30,8 +30,7 @@ public class PlaceJoiner {
 
 	private PlacePair placePair;
 	
-	public PlaceJoiner(String path, FSDataInputStream fs) {
-		filepath = path;
+	public PlaceJoiner(FSDataInputStream fs) {
 		InitialiseStructs();
 		LoadPlacesIntoMemory(fs);
 	}
@@ -55,7 +54,7 @@ public class PlaceJoiner {
 		localeIDToCountry = new HashMap<String, String>();
 		neighborhoodToLocaleID = new HashMap<String, String>();
 		neighborhoodIDToNBName = new HashMap<String, String>();
-				tempResult = new String[3];
+		tempResult = new String[3];
 	}
 	
 	/* Read each line of the places file and load locales and neighborhoods into memory.
@@ -64,8 +63,7 @@ public class PlaceJoiner {
 	 */
 	private void LoadPlacesIntoMemory(FSDataInputStream fs)
 	{
-		BufferedReader br;
-		br = new BufferedReader(new InputStreamReader(fs));
+		BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 		String s;
 		try
 		{
