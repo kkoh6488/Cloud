@@ -93,6 +93,8 @@ public class LocalityDriver {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 
+		job.waitForCompletion(true);
+
 		// Job 3 - Compress localities so there is a single count for each - including neighbourhoods
 		Job sumLocalesJob = new Job(conf, "sum");
 		sumLocalesJob.setNumReduceTasks(1);
@@ -109,6 +111,7 @@ public class LocalityDriver {
 		sumLocalesJob.setOutputKeyClass(Text.class);
 		sumLocalesJob.setOutputValueClass(Text.class);
 
+		sumLocalesJob.waitForCompletion(true);
 		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)
 	}
 }
