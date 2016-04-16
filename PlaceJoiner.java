@@ -255,7 +255,7 @@ public class PlaceJoiner {
 		// Return [countryname, localename, neighborhoodname]
 		tempResult[0] = localeIDToCountry.get(id);
 		tempResult[1] = idToLocaleName.get(id);
-		tempResult[2] = "NA";
+		tempResult[2] = "#";
 		return tempResult;
 	}
 	
