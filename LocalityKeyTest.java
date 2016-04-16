@@ -13,10 +13,10 @@ public class LocalityKeyTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        l1 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City, United Kingdom", "\t \t", "7556490@N05");
-        l2 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City, United Kingdom", "\t \t", "7556490@N05");
-        l3 = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "Seligman, Arizona, United States", "\t \t", "35386145@N05");
-        l4emptyLoc = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "\t \t", "\t \t", "35386145@N05");
+        l1 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City, United Kingdom", "\t \t", 1);
+        l2 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City, United Kingdom", "\t \t", 2);
+        l3 = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "Seligman, Arizona, United States", "\t \t", 1);
+        l4emptyLoc = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "\t \t", "\t \t", 4);
 
     }
 

@@ -12,12 +12,15 @@ public class LocalityReducer extends Reducer<LocalityKey, IntWritable, Text, Int
 	@Override
 	public void reduce(LocalityKey key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 
+		/*
 		int count = 0;
 		for (IntWritable val: values) {
 			count += val.get();
 		}
+		*/
 
-		print.set(key.getCountry() + "\t" + key.toString());
-		context.write(print, new IntWritable(count));
+		//print.set(key.getCountry() + "\t" + key.toString());
+		print.set(key.toString());
+		context.write(print, key.getUniqueUsers());
 	}
 }

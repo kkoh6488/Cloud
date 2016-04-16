@@ -49,7 +49,7 @@ public class LocalityDriver {
 		Job userCountJob = new Job(conf, "user count");
 		userCountJob.setJarByClass(LocalityDriver.class);
 		TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
-		TextOutputFormat.setOutputPath(userCountJob, new Path("userCountTemo"));
+		TextOutputFormat.setOutputPath(userCountJob, new Path("userCountTemp"));
 		userCountJob.setNumReduceTasks(1);
 
 		userCountJob.setMapperClass(UserCountMapper.class);
@@ -63,7 +63,7 @@ public class LocalityDriver {
 
 		userCountJob.waitForCompletion(true);
 
-		// Job 2
+		// Job 2 - Join with place data and filter so only neighborhoods and locales are used.
 		Job job = new Job(conf, "place");
 		job.addCacheFile(new Path(otherArgs[1]).toUri());
 		job.setNumReduceTasks(1); // we use three reducers, you may modify the number
@@ -79,6 +79,8 @@ public class LocalityDriver {
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
+
+		// Job 3 - Get the Top 10 locales per country and the top neighborhood
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 

@@ -4,6 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
@@ -15,22 +16,25 @@ public class LocalityKey implements WritableComparable {
 	private Text placeID = new Text();
 	private Text countryName = new Text();
 	private Text neighborhoodName = new Text();
+	private IntWritable uniqueUsers;
 
 	// Default constructor
 	public LocalityKey() {}
 
-	public LocalityKey(String placeId, String country, String locality, String neighborhood)
+	public LocalityKey(String placeId, String country, String locality, String neighborhood, int uniqueUsers)
 	{
-		localityName.set(locality);
-		placeID.set(placeId);
-		countryName.set(country);
-		neighborhoodName.set(neighborhood);
+		this.localityName.set(locality);
+		this.placeID.set(placeId);
+		this.countryName.set(country);
+		this.neighborhoodName.set(neighborhood);
+		this.uniqueUsers.set(uniqueUsers);
 	}
 
     @Override
 	public int compareTo(Object o)
 	{
         LocalityKey lk = (LocalityKey) o;
+		/*
         if (countryName.equals(lk.countryName) && localityName.equals(lk.localityName))
 		{
             if (neighborhoodName != null && lk.neighborhoodName != null &&
@@ -39,27 +43,43 @@ public class LocalityKey implements WritableComparable {
                 return 0;
             }
         }
-        return -1;
+        */
+		// Sort based on country name, then by number of unique users
+		int compare = countryName.compareTo(lk.countryName);
+		if (compare == 0) {
+			return lk.compareTo(uniqueUsers);
+		}
+		return compare;
+        //return -1;
 		//return placeID.toString().compareTo(lk.toString());
 	}
 
 	@Override
 	public String toString()
 	{
-        if (!localityName.toString().equals("\t \t"))
+		/*
+        if (!localityName.toString().equals(""))
         {
-            return localityName.toString();
+			if (!neighborhoodName.toString().equals((""))) {
+				return countryName.toString() + "\t" + localityName.toString() + "\t" + neighborhoodName.toString();
+			}
         }
-        return placeID.toString();
+        */
+		return countryName.toString() + "\t" + localityName.toString() + "\t" + neighborhoodName.toString();
+		//return countryName.toString() + "\t" + neighborhoodName.toString();
     }
 
+	/* To entries are equal if they have the same locality AND neighbourhood AND country
+
+	 */
 	@Override
 	public boolean equals(Object o)
 	{
 		if(o instanceof LocalityKey)
 		{
 			LocalityKey lk = (LocalityKey) o;
-			return localityName.equals(lk.localityName) && countryName.equals(lk.countryName);
+			return localityName.equals(lk.localityName) && countryName.equals(lk.countryName)
+						&& neighborhoodName.equals(lk.neighborhoodName);
 		}
 		return false;
 	}
@@ -67,7 +87,7 @@ public class LocalityKey implements WritableComparable {
     @Override
     public int hashCode()
     {
-        return localityName.hashCode() + countryName.hashCode();
+        return localityName.hashCode() + countryName.hashCode() + neighborhoodName.hashCode();
     }
 
 	public String getLocale()
@@ -79,6 +99,8 @@ public class LocalityKey implements WritableComparable {
     {
         return countryName.toString();
     }
+
+	public IntWritable getUniqueUsers() { return uniqueUsers; }
 	
 	@Override
 	//overriding default readFields method. 
@@ -88,6 +110,7 @@ public class LocalityKey implements WritableComparable {
 	    placeID.readFields( in );
 		neighborhoodName.readFields( in );
 		countryName.readFields( in );
+		uniqueUsers.readFields( in );
 	}
 
 	@Override
@@ -97,5 +120,6 @@ public class LocalityKey implements WritableComparable {
 		placeID.write( out );
 		neighborhoodName.write( out );
 		countryName.write( out );
+		uniqueUsers.write( out );
   	}
 }

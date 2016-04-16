@@ -43,10 +43,10 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			//String tags = dataArray[2];
 			String placeId = dataArray[0];
 			Integer userCount = Integer.parseInt(dataArray[1]);
-			String neighborhood = "\t \t";
+			String neighborhood = "";
 			
-			String countryName = "\t \t";
-			String localityName = "\t \t";
+			String countryName;
+			String localityName;
 			String[] data;
 			if (pJoiner.IsIdForLocale(placeId))
 			{
@@ -80,7 +80,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			}
 			*/
 			
-			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood);
+			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, userCount);
 			/*
 			if (localeCounts.containsKey(localeKey))
 			{
