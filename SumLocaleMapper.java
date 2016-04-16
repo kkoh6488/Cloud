@@ -26,7 +26,7 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
         String locale = dataArray[1];
         String neighbourhood = dataArray[2];
         int uniqueCount = Integer.parseInt(dataArray[3]);
-        placePair = new PlacePair(country, locale);
+        placePair = new PlacePair(locale, country);
 
         // Get rid of duplicate users for each place - this relies on input being sorted
 
@@ -36,7 +36,7 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
             localeSum.put(placePair, uniqueCount);
         }
 
-        if (!neighbourhood.equals("#")) {
+        else if (!neighbourhood.equals("#")) {
             count.set(uniqueCount);
             context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);
         }
