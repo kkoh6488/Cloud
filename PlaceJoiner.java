@@ -73,14 +73,15 @@ public class PlaceJoiner {
 				String placeID = values[0];
 				String placeName = values[4];
 				String placeType = values[5];
-				String country = placeName.substring(placeName.lastIndexOf(",") + 2);
+				int lastCommaIndex = placeName.lastIndexOf(",");
+				String country = placeName.substring(lastCommaIndex + 2);
 				if (values.length < 7)
 				{
 					continue;
 				}
 				if (placeType.equals("7"))
 				{
-					String locale = placeName.substring(0, placeName.indexOf(','));
+					String locale = placeName.substring(0, lastCommaIndex);
 					placePair = new PlacePair(locale, country);
 					//if (!localePairToID.containsKey(placePair)) {
 					idToLocaleName.put(placeID, locale);
@@ -147,14 +148,15 @@ public class PlaceJoiner {
 				String placeID = values[0];
 				String placeName = values[4];
 				String placeType = values[5];
-				String country = placeName.substring(placeName.lastIndexOf(",") + 2);
+				int lastCommaIndex = placeName.lastIndexOf(",");
+				String country = placeName.substring(lastCommaIndex + 2);
 				if (values.length < 7)
 				{
 					continue;
 				}
 				if (placeType.equals("7"))
 				{
-					String locale = placeName.substring(0, placeName.indexOf(','));
+					String locale = placeName.substring(0, lastCommaIndex);
 					placePair = new PlacePair(locale, country);
 					//if (!localePairToID.containsKey(placePair)) {
 					idToLocaleName.put(placeID, locale);
