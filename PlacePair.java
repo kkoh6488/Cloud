@@ -11,8 +11,8 @@ public class PlacePair {
     String country;
 
     public PlacePair(String loc, String country) {
-        locale = loc;
-        country = country;
+        this.locale = loc;
+        this.country = country;
     }
 
     @Override

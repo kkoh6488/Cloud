@@ -23,9 +23,13 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
                 topNeighbourhoods.put(tempPair, placeKey);
             }
         } else {
-            SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
-            result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":"
-                    + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers();
+            if (topNeighbourhoods.containsKey(tempPair)) {
+                SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
+                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":"
+                        + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers() + ")};";
+            } else {
+                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":" + placeKey.getUniqueUsers()+ ")};";
+            }
             output.set(result);
             context.write(output, empty);
         }
