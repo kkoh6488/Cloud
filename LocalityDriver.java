@@ -49,7 +49,7 @@ public class LocalityDriver {
 		Job userCountJob = new Job(conf, "user count");
 		userCountJob.setJarByClass(LocalityDriver.class);
 		TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
-		TextOutputFormat.setOutputPath(userCountJob, new Path(otherArgs[2]));
+		TextOutputFormat.setOutputPath(userCountJob, new Path("userCountTemo"));
 		userCountJob.setNumReduceTasks(1);
 
 		userCountJob.setMapperClass(UserCountMapper.class);
@@ -63,7 +63,6 @@ public class LocalityDriver {
 
 		userCountJob.waitForCompletion(true);
 
-		/*
 		// Job 2
 		Job job = new Job(conf, "place");
 		job.addCacheFile(new Path(otherArgs[1]).toUri());
@@ -82,6 +81,6 @@ public class LocalityDriver {
 		job.setOutputValueClass(IntWritable.class);
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
-		*/
+
 	}
 }

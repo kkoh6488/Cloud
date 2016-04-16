@@ -15,7 +15,7 @@ import java.util.Map;
 public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritable> {
 		private PlaceJoiner pJoiner;
 		private LocalityKey localeKey;
-		private Map<LocalityKey, Integer> localeCounts;
+		//private Map<LocalityKey, Integer> localeCounts;
 
 		private static final IntWritable one = new IntWritable(1);
 
@@ -26,7 +26,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			Path p = new Path(context.getCacheFiles()[0]);
 			FileSystem fs = FileSystem.get(conf);
 			pJoiner = new PlaceJoiner(fs.open(p));
-			localeCounts = new HashMap<LocalityKey, Integer>();
+			//localeCounts = new HashMap<LocalityKey, Integer>();
 	    }
 		
 		@Override
