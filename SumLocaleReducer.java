@@ -28,6 +28,7 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
             }
         } else {
             // If it's a locale - get the top 10 for each country. Otherwise, skip this locale.
+            // Assume that the first one is the locale with the most unique users for a given country
             if (topCounts.containsKey(country)) {
                 int numLocs = topCounts.get(country);
                 if (numLocs < 10) {

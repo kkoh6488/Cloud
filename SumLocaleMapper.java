@@ -28,13 +28,12 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
         int uniqueCount = Integer.parseInt(dataArray[3]);
         placePair = new PlacePair(locale, country);
 
-        // Get rid of duplicate users for each place - this relies on input being sorted
-
-        // Assume that the first one is the locale with the most unique users for a given country
+        // For each locale, add unique users - But what if uniques for locale overlaps with uniques for neighbourhood???
         // We want to add the number of users per neighbourhood to that sum
-        if (!localeSum.containsKey(placePair) && !neighbourhood.equals("#")) {
+        if (!localeSum.containsKey(placePair) && neighbourhood.equals("#")) {
             localeSum.put(placePair, uniqueCount);
         }
+        // If it's a neighbourhood
         else if (!neighbourhood.equals("#")) {
             count.set(uniqueCount);
             context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);
