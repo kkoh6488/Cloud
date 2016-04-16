@@ -10,9 +10,9 @@ public class PlacePair {
     String locale;
     String country;
 
-    public PlacePair(String loc, String count) {
+    public PlacePair(String loc, String country) {
         locale = loc;
-        country = count;
+        country = country;
     }
 
     @Override

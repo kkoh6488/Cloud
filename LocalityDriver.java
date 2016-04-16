@@ -1,8 +1,6 @@
 package Cloud;
 
-import java.io.File;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -15,7 +13,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 public class LocalityDriver {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		Configuration conf = new Configuration();
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
@@ -48,12 +46,16 @@ public class LocalityDriver {
 		// Check if output paths are in use already
 		FileSystem fs = FileSystem.get(conf);
 		Path countTempPath = new Path("userCountTemp");
-		Path sortOutputPath = new Path(otherArgs[2]);
+		Path sortOutputPath = new Path("placeCountsTemp");
+		Path sumLocalesPath = new Path(otherArgs[2]);
 		if (fs.exists(countTempPath)) {
 			fs.delete(countTempPath, true);
 		}
 		if (fs.exists(sortOutputPath)) {
 			fs.delete(sortOutputPath, true);
+		}
+		if (fs.exists(sumLocalesPath)) {
+			fs.delete(sumLocalesPath, true);
 		}
 
 		// Count the unique users per place ID
@@ -84,16 +86,29 @@ public class LocalityDriver {
 
 		job.setMapperClass(LocalityMapper.class);
 		job.setReducerClass(LocalityReducer.class);
-		
+
 		job.setMapOutputKeyClass(LocalityKey.class);
 		job.setMapOutputValueClass(IntWritable.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 
-		// Job 3 - Get the Top 10 locales per country and the top neighborhood
+		// Job 3 - Compress localities so there is a single count for each - including neighbourhoods
+		Job sumLocalesJob = new Job(conf, "sum");
+		sumLocalesJob.setNumReduceTasks(1);
+		sumLocalesJob.setJarByClass(SumLocaleMapper.class);
+		TextInputFormat.addInputPath(sumLocalesJob, sortOutputPath);
+		TextOutputFormat.setOutputPath(sumLocalesJob, sumLocalesPath);
 
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		sumLocalesJob.setMapperClass(SumLocaleMapper.class);
+		sumLocalesJob.setReducerClass(SumLocaleReducer.class);
 
+		sumLocalesJob.setMapOutputKeyClass(SummedPlaceKey.class);
+		sumLocalesJob.setMapOutputValueClass(IntWritable.class);
+
+		sumLocalesJob.setOutputKeyClass(Text.class);
+		sumLocalesJob.setOutputValueClass(Text.class);
+
+		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)
 	}
 }

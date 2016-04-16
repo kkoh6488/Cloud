@@ -15,6 +15,7 @@ import java.util.Map;
 public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritable> {
 		private PlaceJoiner pJoiner;
 		private LocalityKey localeKey;
+
 		//private Map<LocalityKey, Integer> localeCounts;
 
 		private static final IntWritable one = new IntWritable(1);
@@ -26,7 +27,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			Path p = new Path(context.getCacheFiles()[0]);
 			FileSystem fs = FileSystem.get(conf);
 			pJoiner = new PlaceJoiner(fs.open(p));
-			//localeCounts = new HashMap<LocalityKey, Integer>();
+			//totalCounts = new HashMap<PlacePair, Integer>();
 	    }
 		
 		@Override
@@ -71,7 +72,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 			if (tags.length() > 0)
 			{
 				String[] tagArray = tagString.split(" ");
-				for(String tag: tagArray) 
+				for(String tag: tagArray)
 				{
 					word.set(tag);
 					owner.set(ownerString);
@@ -79,19 +80,21 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 				}
 			}
 			*/
-			
+
 			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, userCount);
+			context.write(localeKey, new IntWritable(userCount));
 			/*
-			if (localeCounts.containsKey(localeKey))
+			localePair = new PlacePair(localityName, countryName);
+			if (totalCounts.containsKey(localePair))
 			{
-				localeCounts.put(localeKey, localeCounts.get(localeKey) + 1);
+				totalCounts.put(localePair, totalCounts.get(localePair) + userCount);
 			}
 			else
 			{
-				localeCounts.put(localeKey, 1);
+				totalCounts.put(localePair, userCount);
 			}
 			*/
-			context.write(localeKey, new IntWritable(userCount));
+
 			//context.write(localeKey, one);
 			//context.write(placeId, new IntWritable(1));
 		}
@@ -99,7 +102,7 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 	/*
 	@Override
 	protected void cleanup(Context context) throws IOException, InterruptedException {
-		for (LocalityKey lk : localeCounts.keySet())
+		for (PlacePair p : totalCounts.keySet())
 		{
 			context.write(lk, new IntWritable(localeCounts.get(lk)));
 		}
