@@ -81,7 +81,7 @@ public class PlaceJoiner {
 				}
 				if (placeType.equals("7"))
 				{
-					String locale = placeName.substring(0, lastCommaIndex);
+					String locale = placeName.substring(0, placeName.indexOf(","));
 					placePair = new PlacePair(locale, country);
 					//if (!localePairToID.containsKey(placePair)) {
 					idToLocaleName.put(placeID, locale);
@@ -156,7 +156,7 @@ public class PlaceJoiner {
 				}
 				if (placeType.equals("7"))
 				{
-					String locale = placeName.substring(0, lastCommaIndex);
+					String locale = placeName.substring(0, placeName.indexOf(","));
 					placePair = new PlacePair(locale, country);
 					//if (!localePairToID.containsKey(placePair)) {
 					idToLocaleName.put(placeID, locale);
