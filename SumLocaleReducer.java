@@ -22,25 +22,25 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
         tempPair = new PlacePair(locale, country);
 
         // If it's a neighbourhood - assume the first one seen for a place pair has the most uniques
-        //if (!placeKey.getNeighbourhood().equals("#")) {
+        if (placeKey.getCountry().charAt(0) == '0') {
             if (!topNeighbourhoods.containsKey(tempPair)) {
                 topNeighbourhoods.put(tempPair, placeKey);
             }
+        }
         //} else {
             // If it's a locale - check its flag
-            if (placeKey.getCountry().charAt(0) == '1') {
+        else if (placeKey.getCountry().charAt(0) == '1') {
 
-                if (topNeighbourhoods.containsKey(tempPair)) {
-                    SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
-                    result = country + "\t{(" + locale + ":"
-                            + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers() + ")};";
-                    output.set(result);
-                } else {
-                    result = country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
-                    output.set(result);
-                }
-                context.write(output, empty);
+            if (topNeighbourhoods.containsKey(tempPair)) {
+                SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
+                result = country + "\t{(" + locale + ":"
+                        + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers() + ")};";
+                output.set(result);
+            } else {
+                result = country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
+                output.set(result);
             }
+            context.write(output, empty);
         }
 
         /*
