@@ -26,6 +26,9 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
         String locale = dataArray[1];
         String neighbourhood = dataArray[2];
         int uniqueCount = Integer.parseInt(dataArray[3]);
+        count.set(uniqueCount);
+        context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);
+        /*
         placePair = new PlacePair(locale, country);
 
         // For each locale, add unique users - But what if uniques for locale overlaps with uniques for neighbourhood???
@@ -38,8 +41,9 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
             count.set(uniqueCount);
             context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);
         }
+        */
     }
-
+    /*
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
         int sum;
@@ -49,4 +53,5 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
             context.write(new SummedPlaceKey(p.country, p.locale, "#", sum), count);
         }
     }
+    */
 }
