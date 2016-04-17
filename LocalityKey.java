@@ -47,7 +47,10 @@ public class LocalityKey implements WritableComparable {
 		// Sort based on country name (including localities first, then neighbourhoods), then by number of unique users
 		int compare = countryName.compareTo(lk.countryName);
 		if (compare == 0) {
-			return lk.uniqueUsers.compareTo(uniqueUsers);
+			compare = lk.uniqueUsers.compareTo(uniqueUsers);
+			if (compare == 0) {
+				compare = localityName.compareTo(lk.localityName);
+			}
 		}
 		return compare;
         //return -1;

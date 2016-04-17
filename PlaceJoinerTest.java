@@ -90,4 +90,13 @@ public class PlaceJoinerTest extends TestCase {
         assertEquals("#", results[2]);
     }
 
+    public void testIsFakeIDForLocale() throws Exception {
+        assertEquals(true, pj.IsIdForLocale("placeID-Loc4-6"));
+    }
+
+    public void testIsFakeIDForNeighbourhood() throws Exception {
+        assertEquals(true, pj.IsIdForKnownNeighborhood("placeID-NeighD"));
+
+    }
+
 }
