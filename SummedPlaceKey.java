@@ -45,7 +45,10 @@ public class SummedPlaceKey implements WritableComparable {
         // Sort based on country name, then by number of unique users (descending).
         int compare = countryName.compareTo(k.countryName);
         if (compare == 0) {
-            return k.uniqueUsers.compareTo(uniqueUsers);
+            compare = k.uniqueUsers.compareTo(uniqueUsers);
+            if (compare == 0) {
+                compare = localityName.compareTo(k.localityName);
+            }
         }
         return compare;
     }
