@@ -45,8 +45,8 @@ public class LocalityDriver {
 
 		// Check if output paths are in use already
 		FileSystem fs = FileSystem.get(conf);
-		Path countTempPath = new Path("userCountTemp");
-		Path sortOutputPath = new Path("placeCountsTemp");
+		Path countTempPath = new Path("tempUserCount");
+		Path sortOutputPath = new Path("tempPlaceCounts");
 		Path sumLocalesPath = new Path(otherArgs[2]);
 		if (fs.exists(countTempPath)) {
 			fs.delete(countTempPath, true);
