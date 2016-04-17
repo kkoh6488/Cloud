@@ -13,15 +13,15 @@ public class LocalityKeyTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        l1 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City", "#", 1);
-        l2 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City", "#", 2);
-        l3 = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "Seligman", "#", 1);
+        l1 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City", "#");
+        l2 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City", "#");
+        l3 = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "Seligman", "#");
         //l4emptyLoc = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "\t \t", "\t \t", 4);
 
-        f2 = new LocalityKey("placeID-Loc4-2", "Country4", "Locale4-2", "#", 3);
-        f3 = new LocalityKey("placeID-Loc4-3", "Country4", "Locale4-3", "#", 2);
-        f4 = new LocalityKey("placeID-Loc4-4", "Country4", "Locale4-4", "#", 2);
-        f5 = new LocalityKey("placeID-Loc4-5", "Country4", "Locale4-5", "#", 3);
+        f2 = new LocalityKey("placeID-Loc4-2", "Country4", "Locale4-2", "#");
+        f3 = new LocalityKey("placeID-Loc4-3", "Country4", "Locale4-3", "#");
+        f4 = new LocalityKey("placeID-Loc4-4", "Country4", "Locale4-4", "#");
+        f5 = new LocalityKey("placeID-Loc4-5", "Country4", "Locale4-5", "#");
 
     }
 

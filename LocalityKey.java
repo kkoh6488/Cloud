@@ -16,48 +16,31 @@ public class LocalityKey implements WritableComparable {
 	private Text placeID = new Text();
 	private Text countryName = new Text();
 	private Text neighborhoodName = new Text();
-	private IntWritable uniqueUsers = new IntWritable();
 
 	// Default constructor
 	public LocalityKey() {}
 
-	public LocalityKey(String placeId, String country, String locality, String neighborhood, int uniqueUsers)
+	public LocalityKey(String placeId, String country, String locality, String neighborhood)
 	{
 		this.localityName.set(locality);
 		this.placeID.set(placeId);
 		this.countryName.set(country);
 		this.neighborhoodName.set(neighborhood);
-		this.uniqueUsers.set(uniqueUsers);
 	}
 
     @Override
 	public int compareTo(Object o)
 	{
         LocalityKey lk = (LocalityKey) o;
-		/*
-        if (countryName.equals(lk.countryName) && localityName.equals(lk.localityName))
-		{
-            if (neighborhoodName != null && lk.neighborhoodName != null &&
-					neighborhoodName.equals(lk.neighborhoodName))
-			{
-                return 0;
-            }
-        }
-        */
 		// Sort based on country name (including localities first, then neighbourhoods), then by number of unique users
 		int compare = countryName.compareTo(lk.countryName);
 		if (compare == 0) {
-			compare = lk.uniqueUsers.compareTo(uniqueUsers);
+			compare = localityName.compareTo(lk.localityName);
 			if (compare == 0) {
-				compare = localityName.compareTo(lk.localityName);
-				if (compare == 0) {
-					compare = neighborhoodName.compareTo(lk.neighborhoodName);
-				}
+				compare = neighborhoodName.compareTo(lk.neighborhoodName);
 			}
 		}
 		return compare;
-        //return -1;
-		//return placeID.toString().compareTo(lk.toString());
 	}
 
 	@Override
@@ -108,8 +91,6 @@ public class LocalityKey implements WritableComparable {
 
 	public String getNeighbourhood() { return neighborhoodName.toString(); }
 
-	public IntWritable getUniqueUsers() { return uniqueUsers; }
-	
 	@Override
 	//overriding default readFields method. 
 	//It de-serializes the byte stream data
@@ -118,7 +99,6 @@ public class LocalityKey implements WritableComparable {
 	    placeID.readFields( in );
 		neighborhoodName.readFields( in );
 		countryName.readFields( in );
-		uniqueUsers.readFields( in );
 	}
 
 	@Override
@@ -128,6 +108,5 @@ public class LocalityKey implements WritableComparable {
 		placeID.write( out );
 		neighborhoodName.write( out );
 		countryName.write( out );
-		uniqueUsers.write( out );
   	}
 }
