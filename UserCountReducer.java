@@ -19,6 +19,8 @@ public class UserCountReducer extends Reducer<Text, Text, Text, Text> {
             count += 1;
         }
         */
-        context.write(placeID, values.iterator().next());
+        for (Text user : values) {
+            context.write(placeID, user);
+        }
     }
 }
