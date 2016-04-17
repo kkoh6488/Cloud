@@ -66,7 +66,7 @@ public class PlaceMapper extends Mapper<Object, Text, LocalityKey, Text> {
             return;
         }
 
-        localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, 1);
+        localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood);
         output.set(userId);
         context.write(localeKey, output);
 

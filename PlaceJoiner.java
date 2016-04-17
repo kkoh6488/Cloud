@@ -145,7 +145,7 @@ public class PlaceJoiner {
 			while ((s = br.readLine()) != null)
 			{
 				String[] values = s.split("\t");
-				if (values.length < 7)
+				if (values.length < 6)
 				{
 					continue;		//	Place row isn't valid
 				}

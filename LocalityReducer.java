@@ -21,6 +21,6 @@ public class LocalityReducer extends Reducer<LocalityKey, IntWritable, Text, Int
 
 		//print.set(key.getCountry() + "\t" + key.toString());
 		print.set(key.toString());
-		context.write(print, key.getUniqueUsers());
+		//context.write(print, key.getUniqueUsers());
 	}
 }

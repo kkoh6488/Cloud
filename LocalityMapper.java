@@ -65,8 +65,8 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 				return;
 			}
 
-			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, userCount);
-			context.write(localeKey, new IntWritable(userCount));
+			//localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, userCount);
+			//context.write(localeKey, new IntWritable(userCount));
 			/*
 			localePair = new PlacePair(localityName, countryName);
 			if (totalCounts.containsKey(localePair))
