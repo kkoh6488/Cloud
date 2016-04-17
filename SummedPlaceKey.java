@@ -31,11 +31,13 @@ public class SummedPlaceKey implements WritableComparable {
         // 0 for neighbourhoods because they need to be read first.
         // Need to do this so that neighbourhoods are seen first in reduce. (Is this how reducer gets inputs??)
         // Then we can pick the top 10 and get the neighbourhoods at the same time.
+        /*(
         if (neighborhoodName.equals("#")) {
             this.countryName.set("1" + country);
         } else {
             this.countryName.set("0" + country);
         }
+        */
     }
 
     @Override
@@ -91,7 +93,7 @@ public class SummedPlaceKey implements WritableComparable {
     // Strips out the index used for sorting of locality / neighbourhoods
     public String getCountry()
     {
-        return countryName.toString().substring(1);
+        return countryName.toString();
     }
 
     public IntWritable getUniqueUsers() { return uniqueUsers; }

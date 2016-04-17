@@ -27,6 +27,11 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
         String neighbourhood = dataArray[2];
         int uniqueCount = Integer.parseInt(dataArray[3]);
         count.set(uniqueCount);
+        if (neighbourhood.equals("#")) {
+            country = "1" + country;
+        } else {
+            country = "0" + country;
+        }
         context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);
         /*
         placePair = new PlacePair(locale, country);
