@@ -13,7 +13,7 @@ public class PlaceReducer extends Reducer<LocalityKey, Text, Text, IntWritable> 
     private Text print = new Text();
     private String output;
     private PlacePair tempPair;
-    private HashMap<PlacePair, HashSet<Text>> localityUsers;
+    private HashMap<PlacePair, HashSet<Text>> localityUsers = new HashMap<PlacePair, HashSet<Text>();
     private HashSet<Text> seenUsers;
     private IntWritable count = new IntWritable();
 
