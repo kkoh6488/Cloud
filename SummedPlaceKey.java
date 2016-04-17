@@ -93,7 +93,7 @@ public class SummedPlaceKey implements WritableComparable {
     // Strips out the index used for sorting of locality / neighbourhoods
     public String getCountry()
     {
-        return countryName.toString();
+        return countryName.toString().substring(1);
     }
 
     public IntWritable getUniqueUsers() { return uniqueUsers; }
