@@ -14,6 +14,7 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
     Text empty = new Text();
     Text output = new Text();
     String result;
+    private final int TOP_N = 8;    // Make this 10 later
 
     @Override
     public void reduce(SummedPlaceKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
@@ -35,15 +36,27 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
             //}
         }
         else {
-            String nb = "#";
+            // If it's a locale - get the top 10 for each country. Otherwise, skip this locale.
+            // Assume that the first one is the locale with the most unique users for a given country
+            if (topCounts.containsKey(country)) {
+                int numLocs = topCounts.get(country);
+                if (numLocs < TOP_N) {
+                    topCounts.put(country, numLocs + 1);
+                } else {
+                    return;
+                }
+            } else {
+                topCounts.put(country, 0);
+            }
+
+            String nb = "";
             if (topNeighbourhoods.containsKey(tempPair)) {
                 nb = topNeighbourhoods.get(tempPair);
             }
-
-            result = "LOC, has NH :" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + "," + nb + ")};";
+            result = "LOC, has NH :" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ", " + nb + ")};";
+            output.set(result);
+            context.write(output, empty);
         }
-        output.set(result);            //if (!topNeighbourhoods.containsKey(tempPair)) {
-        context.write(output, empty);
 
         /*
         //} else {
@@ -70,18 +83,7 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
                 topNeighbourhoods.put(tempPair, placeKey);
             }
         } else {
-            // If it's a locale - get the top 10 for each country. Otherwise, skip this locale.
-            // Assume that the first one is the locale with the most unique users for a given country
-            if (topCounts.containsKey(country)) {
-                int numLocs = topCounts.get(country);
-                if (numLocs < 10) {
-                    topCounts.put(country, numLocs + 1);
-                } else {
-                    return;
-                }
-            } else {
-                topCounts.put(country, 0);
-            }
+
             if (topNeighbourhoods.containsKey(tempPair)) {
                 SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
                 result = country + "\t{(" + locale + ":"
