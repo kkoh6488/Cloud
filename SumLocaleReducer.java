@@ -20,6 +20,10 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
         String country = placeKey.getCountry();
         String locale = placeKey.getLocale();
         tempPair = new PlacePair(locale, country);
+        output.set("placeKey.getCountry() + \"\\t\" + placeKey.getLocale() + \"\\t\" + placeKey.getNeighbourhood() + \"\\t\"");
+        context.write(output, empty);
+
+        /*
 
         // If it's a neighbourhood - store the top result per locality
         if (!placeKey.getNeighbourhood().equals("#")) {
@@ -49,5 +53,6 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
             output.set(result);
             context.write(output, empty);
         }
+        */
     }
 }
