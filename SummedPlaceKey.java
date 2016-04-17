@@ -26,18 +26,6 @@ public class SummedPlaceKey implements WritableComparable {
         this.neighborhoodName.set(neighborhood);
         this.uniqueUsers.set(uniqueUsers);
         this.countryName.set(country);
-
-        // Append a 0 or 1 to indicate if this is a locality (1) or neighbourhood (0).
-        // 0 for neighbourhoods because they need to be read first.
-        // Need to do this so that neighbourhoods are seen first in reduce. (Is this how reducer gets inputs??)
-        // Then we can pick the top 10 and get the neighbourhoods at the same time.
-        /*(
-        if (neighborhoodName.equals("#")) {
-            this.countryName.set("1" + country);
-        } else {
-            this.countryName.set("0" + country);
-        }
-        */
     }
 
     @Override

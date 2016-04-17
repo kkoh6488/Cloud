@@ -3,6 +3,7 @@ package Cloud;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -22,26 +23,7 @@ public class LocalityDriver {
 			System.exit(2);
 		}
 
-		//conf.addResource(new Path(args[1]));
 		Path path = new Path(args[1]);
-		//FileSystem fs = path.getFileSystem(conf);
-		/*
-		File f = new File(otherArgs[1]);
-		if (!f.exists())
-		{
-			System.err.println("Place.txt not found");
-			System.exit(2);
-		}
-		PlaceJoiner pj = new PlaceJoiner(otherArgs[1]);
-		System.out.println(pj.IsIdForLocale("xbxI9VGYA5oZH8tLJA"));
-		System.out.println(pj.GetLocaleCount());
-		for (int i = 0; i < 10; i++) {
-			//System.out.println(pj.GetLocales().);
-		}
-		System.exit(2);
-		*/
-		// Set the path for places.txt
-		//conf.set("places-path", otherArgs[1]);
 
 		// Check if output paths are in use already
 		FileSystem fs = FileSystem.get(conf);
@@ -77,8 +59,8 @@ public class LocalityDriver {
 		userCountJob.setMapperClass(UserCountMapper.class);
 		userCountJob.setReducerClass(UserCountReducer.class);
 
-		userCountJob.setMapOutputKeyClass(Text.class);
-		userCountJob.setMapOutputValueClass(Text.class);
+		userCountJob.setMapOutputKeyClass(UserPlaceKey.class);
+		userCountJob.setMapOutputValueClass(NullWritable.class);
 
 		userCountJob.setOutputKeyClass(Text.class);
 		userCountJob.setOutputValueClass(Text.class);
@@ -104,9 +86,9 @@ public class LocalityDriver {
 
 		job.waitForCompletion(true);
 
-		// Job 3 - Compress localities so there is a single count for each - including neighbourhoods
+		// Job 3 - Sort localities and neighbourhoods to be in decreasing order
 		Job sumLocalesJob = new Job(conf, "sum");
-		sumLocalesJob.setNumReduceTasks(1);
+		sumLocalesJob.setNumReduceTasks(3);
 		sumLocalesJob.setJarByClass(SumLocaleMapper.class);
 		TextInputFormat.addInputPath(sumLocalesJob, sortOutputPath);
 		TextOutputFormat.setOutputPath(sumLocalesJob, sumLocalesPath);
@@ -118,7 +100,7 @@ public class LocalityDriver {
 		sumLocalesJob.setMapOutputValueClass(IntWritable.class);
 
 		sumLocalesJob.setOutputKeyClass(Text.class);
-		sumLocalesJob.setOutputValueClass(Text.class);
+		sumLocalesJob.setOutputValueClass(NullWritable.class);
 
 		sumLocalesJob.waitForCompletion(true);
 		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)

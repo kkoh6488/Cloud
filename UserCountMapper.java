@@ -1,6 +1,7 @@
 package Cloud;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
@@ -8,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
-public class UserCountMapper extends Mapper<Object, Text, Text, Text> {
+public class UserCountMapper extends Mapper<Object, Text, UserPlaceKey, NullWritable> {
     private Map<UserPlaceKey, String> userCounts = new HashMap<UserPlaceKey, String>();
-    private static final IntWritable ONE = new IntWritable(1);
+    private static final NullWritable empty = NullWritable.get();
     private UserPlaceKey userKey;
 
     @Override
@@ -25,13 +26,13 @@ public class UserCountMapper extends Mapper<Object, Text, Text, Text> {
         String userId = dataArray[1];
         String placeId = dataArray[4];
         userKey = new UserPlaceKey(userId, placeId);
-
+        context.write(userKey, empty);
         // Get rid of duplicate users for each place
-        if (!userCounts.containsKey(key)) {
-            userCounts.put(userKey, userId);
-        }
+        //if (!userCounts.containsKey(key)) {
+        //    userCounts.put(userKey, userId);
+        //}
     }
-
+    /*
     // Output distinct place id, user id pairs
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
@@ -39,4 +40,5 @@ public class UserCountMapper extends Mapper<Object, Text, Text, Text> {
             context.write(u.placeID, u.user);
         }
     }
+    */
 }

@@ -4,7 +4,6 @@ import org.apache.hadoop.fs.FSDataInputStream;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class PlaceJoiner {
 	
@@ -25,8 +24,6 @@ public class PlaceJoiner {
 	private HashMap<String, String> localeIDToCountry;
 	
 	private String[] tempResult;
-
-	private boolean isReady = false;
 
 	private PlacePair placePair;
 	
@@ -99,13 +96,7 @@ public class PlaceJoiner {
 					String neighbourhood = placeName.substring(0, firstcomma);
 					String locale = placeName.substring(firstcomma + 2, secondcomma);
 					placePair = new PlacePair(locale, country);
-					/*
-					s = s.replace(",", "");
-					String[] nhoodValues = s.split(" ");
-					String locale = nhoodValues[1];										// Assume that the 2nd value is a locale - might not be, but will test.
-					String tagCountry = nhoodValues[nhoodValues.length - 1];			// Assume the last value is the country
-					placePair = new Pair<String, String>(locale, tagCountry);
-					*/
+
 					if (localePairToID.containsKey(placePair))
 					{
 						neighborhoodIDToPlacePair.put(placeID, placePair);	// Want to map neighborhood ID to a locale ID for later use
@@ -125,7 +116,6 @@ public class PlaceJoiner {
 				}
 			}
 			br.close();
-			isReady = true;
 		}
 		catch (IOException e)
 		{
@@ -200,17 +190,11 @@ public class PlaceJoiner {
 				}
 			}
 			br.close();
-			isReady = true;
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-	}
-
-	public boolean IsReady()
-	{
-		return isReady;
 	}
 
 	/* Checks if the placeid associated with a photo is for a locale.
@@ -255,20 +239,5 @@ public class PlaceJoiner {
 		tempResult[1] = idToLocaleName.get(id);
 		tempResult[2] = "#";
 		return tempResult;
-	}
-	
-	public String[] GetPlaceDataByTag(String tags)
-	{
-		return null;
-	}
-
-	public int GetLocaleCount()
-	{
-		return idToLocaleName.size();
-	}
-
-	public Iterator<String> GetLocales()
-	{
-		return idToLocaleName.values().iterator();
 	}
 }
