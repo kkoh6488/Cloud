@@ -27,7 +27,11 @@ public class UserPlaceKey implements WritableComparable{
         if (user.equals(k.user) && placeID.equals(k.placeID)) {
             return 0;
         } else {
-            return placeID.compareTo(k.placeID);
+            int result = placeID.compareTo(k.placeID);
+            if (result == 0) {
+                result = user.compareTo(k.user);
+            }
+            return result;
         }
     }
 

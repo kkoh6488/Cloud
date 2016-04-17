@@ -33,9 +33,9 @@ public class PlaceMapper extends Mapper<Object, Text, LocalityKey, Text> {
             throws IOException, InterruptedException {
 
         String[] dataArray = value.toString().split("\t"); //split the data into array
-        if (dataArray.length < 2)
+        if (dataArray.length != 2)
         {
-            //  record with incomplete data
+            //  record with invalid data
             return; // don't emit anything
         }
         String placeId = dataArray[0];
