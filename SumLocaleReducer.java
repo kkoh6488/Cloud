@@ -35,7 +35,13 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
             //}
         }
         else {
-            result = "LOC, has NH :" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
+            String nb = "#";
+            if (topNeighbourhoods.containsKey(tempPair)) {
+                SummedPlaceKey k = topNeighbourhoods.get(tempPair);
+                nb = k.getNeighbourhood() + ":" + k.getUniqueUsers();
+            }
+
+            result = "LOC, has NH :" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + "," + nb + ")};";
         }
         output.set(result);            //if (!topNeighbourhoods.containsKey(tempPair)) {
         context.write(output, empty);
