@@ -8,7 +8,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text, Text> {
-    HashMap<PlacePair, SummedPlaceKey> topNeighbourhoods = new HashMap<PlacePair, SummedPlaceKey>();
+    HashMap<PlacePair, String> topNeighbourhoods = new HashMap<PlacePair, String>();
     HashMap<String, Integer> topCounts = new HashMap<String, Integer>();    // Gets the top N per country
     PlacePair tempPair;
     Text empty = new Text();
@@ -28,7 +28,7 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
                     + placeKey.getUniqueUsers() + ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers() + ")};";
 
             if (!topNeighbourhoods.containsKey(tempPair)) {
-                topNeighbourhoods.put(tempPair, placeKey);
+                topNeighbourhoods.put(tempPair, placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers());
             }
 
             //    topNeighbourhoods.put(tempPair, placeKey);
@@ -37,8 +37,7 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
         else {
             String nb = "#";
             if (topNeighbourhoods.containsKey(tempPair)) {
-                SummedPlaceKey k = topNeighbourhoods.get(tempPair);
-                nb = k.getNeighbourhood() + ":" + k.getUniqueUsers();
+                nb = topNeighbourhoods.get(tempPair);
             }
 
             result = "LOC, has NH :" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + "," + nb + ")};";
