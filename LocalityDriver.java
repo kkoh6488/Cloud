@@ -58,6 +58,15 @@ public class LocalityDriver {
 			fs.delete(sumLocalesPath, true);
 		}
 
+		// 1. Get rid of duplicates - emit placeID, userID
+
+		// 2. Join - filter only neighbourhoods and locales - no summing, just filter
+
+		// 2. Sum number of unique users per locale - including neighbourhoods
+		// Emit locales and neighbourhoods and unique user count
+
+		// 3.
+
 		// Count the unique users per place ID
 		Job userCountJob = new Job(conf, "user count");
 		userCountJob.setJarByClass(LocalityDriver.class);
@@ -84,11 +93,11 @@ public class LocalityDriver {
 		TextInputFormat.addInputPath(job, countTempPath);
 		TextOutputFormat.setOutputPath(job, sortOutputPath);
 
-		job.setMapperClass(LocalityMapper.class);
-		job.setReducerClass(LocalityReducer.class);
+		job.setMapperClass(PlaceMapper.class);
+		job.setReducerClass(PlaceReducer.class);
 
 		job.setMapOutputKeyClass(LocalityKey.class);
-		job.setMapOutputValueClass(IntWritable.class);
+		job.setMapOutputValueClass(Text.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);

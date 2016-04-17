@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
-public class UserCountMapper extends Mapper<Object, Text, Text, IntWritable> {
-    private Map<UserPlaceKey, Integer> userCounts = new HashMap<UserPlaceKey, Integer>();
+public class UserCountMapper extends Mapper<Object, Text, Text, Text> {
+    private Map<UserPlaceKey, String> userCounts = new HashMap<UserPlaceKey, String>();
     private static final IntWritable ONE = new IntWritable(1);
     private UserPlaceKey userKey;
 
@@ -28,14 +28,15 @@ public class UserCountMapper extends Mapper<Object, Text, Text, IntWritable> {
 
         // Get rid of duplicate users for each place
         if (!userCounts.containsKey(key)) {
-            userCounts.put(userKey, 1);
+            userCounts.put(userKey, userId);
         }
     }
 
+    // Output distinct place id, user id pairs
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
         for (UserPlaceKey u : userCounts.keySet()) {
-            context.write(u.placeID, ONE);
+            context.write(u.placeID, u.user);
         }
     }
 }

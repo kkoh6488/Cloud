@@ -106,6 +106,8 @@ public class LocalityKey implements WritableComparable {
         return countryName.toString();
     }
 
+	public String getNeighbourhood() { return neighborhoodName.toString(); }
+
 	public IntWritable getUniqueUsers() { return uniqueUsers; }
 	
 	@Override
