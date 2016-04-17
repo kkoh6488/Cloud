@@ -70,24 +70,22 @@ public class PlaceJoiner {
 			while ((s = br.readLine()) != null)
 			{
 				String[] values = s.split("\t");
+				if (values.length < 7)
+				{
+					continue;
+				}
 				String placeID = values[0];
 				String placeName = values[4];
 				String placeType = values[5];
 				int lastCommaIndex = placeName.lastIndexOf(",");
 				String country = placeName.substring(lastCommaIndex + 2);
-				if (values.length < 7)
-				{
-					continue;
-				}
 				if (placeType.equals("7"))
 				{
 					String locale = placeName.substring(0, placeName.indexOf(","));
 					placePair = new PlacePair(locale, country);
-					//if (!localePairToID.containsKey(placePair)) {
 					idToLocaleName.put(placeID, locale);
 					localeIDToCountry.put(placeID, country);
 					localePairToID.put(placePair, placeID);
-					//}
 				}
 				else if (placeType.equals("22"))
 				{
@@ -145,7 +143,7 @@ public class PlaceJoiner {
 			while ((s = br.readLine()) != null)
 			{
 				String[] values = s.split("\t");
-				if (values.length < 6)
+				if (values.length < 7)
 				{
 					continue;		//	Place row isn't valid
 				}
