@@ -20,16 +20,22 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
         String country = placeKey.getCountry().substring(1);
         String locale = placeKey.getLocale();
         tempPair = new PlacePair(locale, country);
-        
+
         // If it's a neighbourhood - assume the first one seen for a place pair has the most uniques
         if (placeKey.getCountry().charAt(0) == '0') {
-            result = "NB:" + country + "\t{(" + locale + ":"
+
+            result = "NB Contains Key:" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":"
                     + placeKey.getUniqueUsers() + ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers() + ")};";
+
+            if (!topNeighbourhoods.containsKey(tempPair)) {
+                topNeighbourhoods.put(tempPair, placeKey);
+            }
+
             //    topNeighbourhoods.put(tempPair, placeKey);
             //}
         }
         else {
-            result = "LOC:" + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
+            result = "LOC, has NH :" + topNeighbourhoods.containsKey(tempPair) + ", " + country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
         }
         output.set(result);            //if (!topNeighbourhoods.containsKey(tempPair)) {
         context.write(output, empty);
