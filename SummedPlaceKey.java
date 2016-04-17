@@ -48,6 +48,9 @@ public class SummedPlaceKey implements WritableComparable {
             compare = k.uniqueUsers.compareTo(uniqueUsers);
             if (compare == 0) {
                 compare = localityName.compareTo(k.localityName);
+                if (compare == 0) {
+                    compare = neighborhoodName.compareTo(k.neighborhoodName);
+                }
             }
         }
         return compare;

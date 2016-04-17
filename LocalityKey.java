@@ -50,6 +50,9 @@ public class LocalityKey implements WritableComparable {
 			compare = lk.uniqueUsers.compareTo(uniqueUsers);
 			if (compare == 0) {
 				compare = localityName.compareTo(lk.localityName);
+				if (compare == 0) {
+					compare = neighborhoodName.compareTo(lk.neighborhoodName);
+				}
 			}
 		}
 		return compare;
