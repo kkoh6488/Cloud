@@ -17,26 +17,30 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
 
     @Override
     public void reduce(SummedPlaceKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-        String country = placeKey.getCountry();
+        String country = placeKey.getCountry().substring(1);
         String locale = placeKey.getLocale();
         tempPair = new PlacePair(locale, country);
 
         // If it's a neighbourhood - assume the first one seen for a place pair has the most uniques
-        if (!placeKey.getNeighbourhood().equals("#")) {
+        //if (!placeKey.getNeighbourhood().equals("#")) {
             if (!topNeighbourhoods.containsKey(tempPair)) {
                 topNeighbourhoods.put(tempPair, placeKey);
             }
-        } else {
-            if (topNeighbourhoods.containsKey(tempPair)) {
-                SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
-                result = country + "\t{(" + locale + ":"
-                        + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers() + ")};";
-                output.set(result);
-            } else {
-                result = country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
-                output.set(result);
+        //} else {
+            // If it's a locale - check its flag
+            if (placeKey.getCountry().charAt(0) == '1') {
+
+                if (topNeighbourhoods.containsKey(tempPair)) {
+                    SummedPlaceKey topNB = topNeighbourhoods.get(tempPair);
+                    result = country + "\t{(" + locale + ":"
+                            + placeKey.getUniqueUsers() + ", " + topNB.getNeighbourhood() + ":" + topNB.getUniqueUsers() + ")};";
+                    output.set(result);
+                } else {
+                    result = country + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
+                    output.set(result);
+                }
+                context.write(output, empty);
             }
-            context.write(output, empty);
         }
 
         /*
