@@ -23,7 +23,6 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 		@Override
 		protected void setup(Context context) throws IOException, InterruptedException {
 	        Configuration conf = context.getConfiguration();
-			//Path p = new Path(conf.get("places-path"));
 			Path p = new Path(context.getCacheFiles()[0]);
 			FileSystem fs = FileSystem.get(conf);
 			pJoiner = new PlaceJoiner(fs.open(p));
@@ -40,8 +39,6 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 				//  record with incomplete data
 				return; // don't emit anything
 			}
-			//String ownerId = dataArray[1];
-			//String tags = dataArray[2];
 			String placeId = dataArray[0];
 			Integer userCount = Integer.parseInt(dataArray[1]);
 			String neighborhood = "#";
@@ -67,19 +64,6 @@ public class LocalityMapper extends Mapper<Object, Text, LocalityKey, IntWritabl
 				// Not a locale or neighborhood -> Skip this row
 				return;
 			}
-			/*
-			// Check tags for neighborhood
-			if (tags.length() > 0)
-			{
-				String[] tagArray = tagString.split(" ");
-				for(String tag: tagArray)
-				{
-					word.set(tag);
-					owner.set(ownerString);
-					context.write(word, owner);
-				}
-			}
-			*/
 
 			localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood, userCount);
 			context.write(localeKey, new IntWritable(userCount));
