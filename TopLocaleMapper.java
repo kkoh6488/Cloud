@@ -27,28 +27,24 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
         int uniqueCount = Integer.parseInt(dataArray[3]);
         count.set(uniqueCount);
 
-        String countryWithoutFlag = country.substring(1);
-
         // If it's a locale, only write the top 10 for each country
         if (country.charAt(0) == '1') {
-            if (lastCountry.equals(countryWithoutFlag)) {
+            if (lastCountry.equals(country)) {
                 if (counter < TOP_N) {
                     counter++;
                 } else {
                     return;
                 }
             } else {
-                // Reset the counters
                 counter = 0;
             }
-            country = countryWithoutFlag;     // Remove the flag for locale
-            lastCountry = country;                // Store the locale of the previous row
-            locale = locale + "1";              // Add flag so locales will be after the top NB
+            lastCountry = country;                      // Store the locale of the previous row
+            locale = locale + "1";                      // Add flag so locales will be after the top NB
         }
         else {
-            country = countryWithoutFlag;             // Remove the flag for NB
             locale = locale + "0";                      // Add flag so NB will appear first
         }
+        country = country.substring(1);                 // Remove the flag for the country
         context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), count);
     }
 }
