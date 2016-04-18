@@ -7,7 +7,6 @@ import java.io.IOException;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
 public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWritable> {
-    private PlacePair placePair;
     private IntWritable count = new IntWritable();
 
     @Override

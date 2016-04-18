@@ -14,36 +14,44 @@ public class PlaceReducer extends Reducer<LocalityKey, Text, Text, IntWritable> 
     private String output;
     private PlacePair tempPair;
     private HashMap<PlacePair, HashSet<Text>> localityUsers = new HashMap<PlacePair, HashSet<Text>>();
-    private HashSet<Text> seenUsers;
+    private HashSet<Text> seenUsers = new HashSet<>();
     private IntWritable count = new IntWritable();
 
     @Override
     public void reduce(LocalityKey key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        tempPair = new PlacePair(key.getLocale(), key.getCountry());
+        //tempPair = new PlacePair(key.getLocale(), key.getCountry());
         int counter = 0;
+        seenUsers.clear();
 
+        for (Text t : values) {
+            if (!seenUsers.contains(t)) {
+                seenUsers.add(t);
+                counter++;
+            }
+        }
+        print.set(key.toString());
+        count.set(counter);
+        context.write(print, count);
+        /*
         if (localityUsers.containsKey(tempPair)) {
             seenUsers = localityUsers.get(tempPair);
         } else {
             seenUsers = new HashSet<Text>();
             localityUsers.put(tempPair, seenUsers);
         }
+        */
 
-        for (Text t : values) {
-            if (!seenUsers.contains(t)) {
-                seenUsers.add(t);
-            }
-            counter++;
-        }
-
+        /*
         // If it's a neighbourhood - sum it and output
         if (!key.getNeighbourhood().equals("#")) {
             print.set(key.toString());
             count.set(counter);
             context.write(print, count);
         }
+        */
     }
 
+    /*
     /// For each locality (only), print out the number of distinct users including neighbourhood unique users (no duplicates)
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
@@ -55,5 +63,5 @@ public class PlaceReducer extends Reducer<LocalityKey, Text, Text, IntWritable> 
             context.write(print, count);
         }
     }
-
+    */
 }

@@ -25,11 +25,11 @@ public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, N
         */
         String locale = placeKey.getLocale();
         if (locale.charAt(locale.length() - 1) == '0') {
-            lastLocale = placeKey.getLocale().substring(1);     // Remove the flag
+            lastLocale = locale.substring(0, locale.length() - 1);     // Remove the flag
             lastNB = ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers();
         } else {
             // For each locale, get the top neighbourhood for it - should be the previous row
-            locale = placeKey.getLocale().substring(0, locale.length() - 1);
+            locale = locale.substring(0, locale.length() - 1);
             if (locale.equals(lastLocale)) {
                 result = placeKey.getCountry() + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + lastNB + ")};";
                 lastLocale = "";

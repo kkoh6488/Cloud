@@ -23,8 +23,6 @@ public class LocalityDriver {
 			System.exit(2);
 		}
 
-		Path path = new Path(args[1]);
-
 		// Check if output paths are in use already
 		FileSystem fs = FileSystem.get(conf);
 		Path countTempPath = new Path("tempUserCount");

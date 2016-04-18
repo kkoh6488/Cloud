@@ -8,9 +8,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.conf.Configuration;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
 public class PlaceMapper extends Mapper<Object, Text, LocalityKey, Text> {
@@ -51,8 +48,6 @@ public class PlaceMapper extends Mapper<Object, Text, LocalityKey, Text> {
             countryName = data[0];
             localityName = data[1];
         }
-
-        // If it's a neighbourhood - count the distinct users for the locale
         else if (pJoiner.IsIdForKnownNeighborhood(placeId))
         {
             data = pJoiner.GetPlaceDataByNeighborhoodId(placeId);
@@ -66,9 +61,16 @@ public class PlaceMapper extends Mapper<Object, Text, LocalityKey, Text> {
             return;
         }
 
-        localeKey = new LocalityKey(placeId, countryName, localityName, neighborhood);
+        localeKey = new LocalityKey(countryName, localityName, neighborhood);
         output.set(userId);
         context.write(localeKey, output);
+
+        //Context write - to do set intersection - emit another record for with key just for locale,
+        // Then in the reduce, if the key is a locale, do a normal count but don't include duplicates
+        if (!neighborhood.equals("#")) {
+            localeKey = new LocalityKey(countryName, localityName, "#");
+            context.write(localeKey, output);
+        }
 
 			/*
 			localePair = new PlacePair(localityName, countryName);
