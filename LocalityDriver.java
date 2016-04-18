@@ -40,6 +40,9 @@ public class LocalityDriver {
 		if (fs.exists(sortLocalesPath)) {
 			fs.delete(sortLocalesPath, true);
 		}
+		if (fs.exists(finalPath)) {
+			fs.delete(finalPath, true);
+		}
 
 		// 1. Get rid of duplicates - emit placeID, userID
 
@@ -109,20 +112,20 @@ public class LocalityDriver {
 
 		// Job 4 - Top 10 Locales for each Country
 		Job topLocalesJob = new Job(conf, "n");
-		sumLocalesJob.setNumReduceTasks(1);
-		sumLocalesJob.setJarByClass(LocalityDriver.class);
+		topLocalesJob.setNumReduceTasks(1);
+		topLocalesJob.setJarByClass(LocalityDriver.class);
 		TextInputFormat.addInputPath(topLocalesJob, sortLocalesPath);
 		TextOutputFormat.setOutputPath(topLocalesJob, finalPath);
 
-		sumLocalesJob.setMapperClass(TopLocaleMapper.class);
-		sumLocalesJob.setReducerClass(TopLocaleReducer.class);
+		topLocalesJob.setMapperClass(TopLocaleMapper.class);
+		topLocalesJob.setReducerClass(TopLocaleReducer.class);
 
-		sumLocalesJob.setMapOutputKeyClass(TopLocaleKey.class);
-		sumLocalesJob.setMapOutputValueClass(IntWritable.class);
+		topLocalesJob.setMapOutputKeyClass(TopLocaleKey.class);
+		topLocalesJob.setMapOutputValueClass(IntWritable.class);
 
-		sumLocalesJob.setOutputKeyClass(Text.class);
-		sumLocalesJob.setOutputValueClass(NullWritable.class);
+		topLocalesJob.setOutputKeyClass(Text.class);
+		topLocalesJob.setOutputValueClass(NullWritable.class);
 
-		sumLocalesJob.waitForCompletion(true);
+		topLocalesJob.waitForCompletion(true);
 	}
 }
