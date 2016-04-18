@@ -11,16 +11,16 @@ import org.apache.hadoop.io.WritableComparable;
 /* Key for locality data.
  * Will be passed to the combiner for aggregation.
  */
-public class SummedPlaceKey implements WritableComparable {
+public class TopLocaleKey implements WritableComparable {
     private Text localityName = new Text();
     private Text countryName = new Text();
     private Text neighborhoodName = new Text();
     private IntWritable uniqueUsers = new IntWritable();
 
     // Default constructor
-    public SummedPlaceKey() {}
+    public TopLocaleKey() {}
 
-    public SummedPlaceKey(String country, String locality, String neighborhood, int uniqueUsers)
+    public TopLocaleKey(String country, String locality, String neighborhood, int uniqueUsers)
     {
         this.localityName.set(locality);
         this.neighborhoodName.set(neighborhood);
@@ -31,16 +31,13 @@ public class SummedPlaceKey implements WritableComparable {
     @Override
     public int compareTo(Object o)
     {
-        SummedPlaceKey k = (SummedPlaceKey) o;
+        TopLocaleKey k = (TopLocaleKey) o;
         // Sort based on country name, then by number of unique users (descending).
         int compare = countryName.compareTo(k.countryName);
         if (compare == 0) {
-            compare = k.uniqueUsers.compareTo(uniqueUsers);
+            compare = localityName.compareTo(k.localityName);
             if (compare == 0) {
-                compare = localityName.compareTo(k.localityName);
-                if (compare == 0) {
-                    compare = neighborhoodName.compareTo(k.neighborhoodName);
-                }
+                compare = neighborhoodName.compareTo(k.neighborhoodName);
             }
         }
         return compare;
@@ -50,7 +47,7 @@ public class SummedPlaceKey implements WritableComparable {
     // will go to same partition
     @Override
     public int hashCode() {
-        return (countryName.toString().substring(1)).hashCode();
+        return countryName.toString().hashCode();
     }
 
     @Override
@@ -65,9 +62,9 @@ public class SummedPlaceKey implements WritableComparable {
     @Override
     public boolean equals(Object o)
     {
-        if(o instanceof SummedPlaceKey)
+        if(o instanceof TopLocaleKey)
         {
-            SummedPlaceKey k = (SummedPlaceKey) o;
+            TopLocaleKey k = (TopLocaleKey) o;
             return localityName.equals(k.localityName) && countryName.equals(k.countryName)
                     && neighborhoodName.equals(k.neighborhoodName);
         }

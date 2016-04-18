@@ -28,16 +28,17 @@ public class LocalityDriver {
 		// Check if output paths are in use already
 		FileSystem fs = FileSystem.get(conf);
 		Path countTempPath = new Path("tempUserCount");
-		Path sortOutputPath = new Path("tempPlaceCounts");
-		Path sumLocalesPath = new Path(otherArgs[2]);
+		Path placeTempPath = new Path("tempPlaceCount");
+		Path sortLocalesPath = new Path("tempSortLocale");
+		Path finalPath = new Path(otherArgs[2]);
 		if (fs.exists(countTempPath)) {
 			fs.delete(countTempPath, true);
 		}
-		if (fs.exists(sortOutputPath)) {
-			fs.delete(sortOutputPath, true);
+		if (fs.exists(placeTempPath)) {
+			fs.delete(placeTempPath, true);
 		}
-		if (fs.exists(sumLocalesPath)) {
-			fs.delete(sumLocalesPath, true);
+		if (fs.exists(sortLocalesPath)) {
+			fs.delete(sortLocalesPath, true);
 		}
 
 		// 1. Get rid of duplicates - emit placeID, userID
@@ -73,7 +74,7 @@ public class LocalityDriver {
 		job.setNumReduceTasks(1); // we use three reducers, you may modify the number
 		job.setJarByClass(LocalityDriver.class);
 		TextInputFormat.addInputPath(job, countTempPath);
-		TextOutputFormat.setOutputPath(job, sortOutputPath);
+		TextOutputFormat.setOutputPath(job, placeTempPath);
 
 		job.setMapperClass(PlaceMapper.class);
 		job.setReducerClass(PlaceReducer.class);
@@ -87,11 +88,12 @@ public class LocalityDriver {
 		job.waitForCompletion(true);
 
 		// Job 3 - Sort localities and neighbourhoods to be in decreasing order
+		// Only print top neighbourhood for each
 		Job sumLocalesJob = new Job(conf, "sum");
-		sumLocalesJob.setNumReduceTasks(3);
+		sumLocalesJob.setNumReduceTasks(1);
 		sumLocalesJob.setJarByClass(SumLocaleMapper.class);
-		TextInputFormat.addInputPath(sumLocalesJob, sortOutputPath);
-		TextOutputFormat.setOutputPath(sumLocalesJob, sumLocalesPath);
+		TextInputFormat.addInputPath(sumLocalesJob, placeTempPath);
+		TextOutputFormat.setOutputPath(sumLocalesJob, sortLocalesPath);
 
 		sumLocalesJob.setMapperClass(SumLocaleMapper.class);
 		sumLocalesJob.setReducerClass(SumLocaleReducer.class);
@@ -104,5 +106,23 @@ public class LocalityDriver {
 
 		sumLocalesJob.waitForCompletion(true);
 		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)
+
+		// Job 4 - Top 10 Locales for each Country
+		Job topLocalesJob = new Job(conf, "n");
+		sumLocalesJob.setNumReduceTasks(1);
+		sumLocalesJob.setJarByClass(LocalityDriver.class);
+		TextInputFormat.addInputPath(topLocalesJob, sortLocalesPath);
+		TextOutputFormat.setOutputPath(topLocalesJob, finalPath);
+
+		sumLocalesJob.setMapperClass(TopLocaleMapper.class);
+		sumLocalesJob.setReducerClass(TopLocaleReducer.class);
+
+		sumLocalesJob.setMapOutputKeyClass(TopLocaleKey.class);
+		sumLocalesJob.setMapOutputValueClass(IntWritable.class);
+
+		sumLocalesJob.setOutputKeyClass(Text.class);
+		sumLocalesJob.setOutputValueClass(NullWritable.class);
+
+		sumLocalesJob.waitForCompletion(true);
 	}
 }
