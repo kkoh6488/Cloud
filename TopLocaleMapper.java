@@ -10,7 +10,7 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
     private IntWritable count = new IntWritable();
     private String lastLocale = "";
     private int counter = 0;
-    private final int TOP_N = 10;
+    private final int TOP_N = 7;
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -32,7 +32,8 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
             if (lastLocale.equals(locale)) {
                 if (counter < TOP_N) {
                     counter++;
-                    country = country.substring(1);     //Remove the flag for locale
+                    country = country.substring(1);     // Remove the flag for locale
+                    lastLocale = locale;                // Store the locale of the previous row
                     locale = "1" + locale;              // Add flag so locales will be after the top NB
                 } else {
                     return;
@@ -43,7 +44,6 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
             country = country.substring(1);             // Remove the flag for NB
             locale = "0" + locale;                      // Add flag so NB will appear first
         }
-        lastLocale = locale;
         context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), count);
     }
 }
