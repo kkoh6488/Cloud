@@ -17,18 +17,19 @@ public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, N
     @Override
     public void reduce(TopLocaleKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 
-
+        /*
         result = placeKey.getCountry() + "\t" + placeKey.getLocale()
                 + "\t" + placeKey.getNeighbourhood() + "\t" + placeKey.getUniqueUsers();
         output.set(result);
         context.write(output, empty);
-        /*
-        if (placeKey.getLocale().charAt(0) == '0') {
+        */
+        String locale = placeKey.getLocale();
+        if (locale.charAt(locale.length() - 1) == '0') {
             lastLocale = placeKey.getLocale().substring(1);     // Remove the flag
             lastNB = ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers();
         } else {
             // For each locale, get the top neighbourhood for it - should be the previous row
-            String locale = placeKey.getLocale().substring(1);
+            locale = placeKey.getLocale().substring(0, locale.length() - 1);
             if (locale.equals(lastLocale)) {
                 result = placeKey.getCountry() + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + lastNB + ")};";
                 lastLocale = "";
@@ -38,6 +39,5 @@ public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, N
             output.set(result);
             context.write(output, empty);
         }
-        */
     }
 }
