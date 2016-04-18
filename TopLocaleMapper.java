@@ -9,8 +9,8 @@ import java.io.IOException;
 public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWritable> {
     private IntWritable count = new IntWritable();
     private String lastCountry = "";
-    private int counter = 0;
-    private final int TOP_N = 7;
+    private int counter = 1;
+    private final int TOP_N = 10;
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -36,7 +36,7 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
                     return;
                 }
             } else {
-                counter = 0;
+                counter = 1;
             }
             lastCountry = country;                      // Store the locale of the previous row
             locale = locale + "1";                      // Add flag so locales will be after the top NB
