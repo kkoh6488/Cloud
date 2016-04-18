@@ -9,10 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
-public class UserCountMapper extends Mapper<Object, Text, UserPlaceKey, NullWritable> {
+public class UserCountMapper extends Mapper<Object, Text, Text, NullWritable> {
     private Map<UserPlaceKey, String> userCounts = new HashMap<UserPlaceKey, String>();
-    private static final NullWritable empty = NullWritable.get();
+    //private static final NullWritable empty = NullWritable.get();
     private UserPlaceKey userKey;
+    private Text mapKey = new Text();
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -25,8 +26,9 @@ public class UserCountMapper extends Mapper<Object, Text, UserPlaceKey, NullWrit
         }
         String userId = dataArray[1];
         String placeId = dataArray[4];
-        userKey = new UserPlaceKey(userId, placeId);
-        context.write(userKey, empty);
+        //userKey = new UserPlaceKey(userId, placeId);
+        mapKey.set(placeId + "\t" + userId);
+        context.write(mapKey, NullWritable.get());
         // Get rid of duplicate users for each place
         //if (!userCounts.containsKey(key)) {
         //    userCounts.put(userKey, userId);

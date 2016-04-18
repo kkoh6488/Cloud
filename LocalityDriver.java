@@ -59,11 +59,11 @@ public class LocalityDriver {
 		userCountJob.setMapperClass(UserCountMapper.class);
 		userCountJob.setReducerClass(UserCountReducer.class);
 
-		userCountJob.setMapOutputKeyClass(UserPlaceKey.class);
+		userCountJob.setMapOutputKeyClass(Text.class);
 		userCountJob.setMapOutputValueClass(NullWritable.class);
 
 		userCountJob.setOutputKeyClass(Text.class);
-		userCountJob.setOutputValueClass(Text.class);
+		userCountJob.setOutputValueClass(NullWritable.class);
 
 		userCountJob.waitForCompletion(true);
 
