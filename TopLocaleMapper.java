@@ -41,11 +41,11 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
             }
             country = country.substring(1);     // Remove the flag for locale
             lastLocale = locale;                // Store the locale of the previous row
-            locale = "1" + locale;              // Add flag so locales will be after the top NB
+            locale = locale + "1";              // Add flag so locales will be after the top NB
         }
         else {
             country = country.substring(1);             // Remove the flag for NB
-            locale = "0" + locale;                      // Add flag so NB will appear first
+            locale = locale + "0";                      // Add flag so NB will appear first
         }
         context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), count);
     }
