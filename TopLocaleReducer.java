@@ -17,6 +17,12 @@ public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, N
     @Override
     public void reduce(TopLocaleKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 
+
+        result = placeKey.getCountry() + "\t" + placeKey.getLocale()
+                + "\t" + placeKey.getNeighbourhood() + "\t" + placeKey.getUniqueUsers();
+        output.set(result);
+        context.write(output, empty);
+        /*
         if (placeKey.getLocale().charAt(0) == '0') {
             lastLocale = placeKey.getLocale().substring(1);     // Remove the flag
             lastNB = ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers();
@@ -24,29 +30,10 @@ public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, N
             // For each locale, get the top neighbourhood for it - should be the previous row
             String locale = placeKey.getLocale().substring(1);
             if (locale.equals(lastLocale)) {
-                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":" + placeKey.getUniqueUsers() + lastNB + ")};";
+                result = placeKey.getCountry() + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + lastNB + ")};";
                 lastLocale = "";
             } else {
-                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":" + placeKey.getUniqueUsers() + placeKey.getNeighbourhood() + ")};";
-            }
-            output.set(result);
-            context.write(output, empty);
-        }
-
-        /*
-        if (placeKey.getLocale().charAt(0) == '0') {
-            lastNB = ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers();
-            lastLocale = locale;
-            return;
-        }
-        else {
-            if (locale.equals(lastLocale))
-            {
-                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":" + placeKey.getUniqueUsers() + lastNB + ")};";
-                lastNB = "";
-                lastLocale = "";
-            } else {
-                result = placeKey.getCountry() + "\t{(" + placeKey.getLocale() + ":" + placeKey.getUniqueUsers() + ")};";
+                result = placeKey.getCountry() + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
             }
             output.set(result);
             context.write(output, empty);
