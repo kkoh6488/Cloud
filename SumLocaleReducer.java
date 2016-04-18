@@ -16,17 +16,17 @@ public class SumLocaleReducer extends Reducer<SummedPlaceKey, IntWritable, Text,
     String result;
     NullWritable empty = NullWritable.get();
     private final int TOP_N = 8;    // Make this 10 later
-    String lastNB = "";
+    String lastLocale = "";
 
     @Override
     public void reduce(SummedPlaceKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
         // Emit the sorted rows - but only the top neighbourhood
-        if (placeKey.getCountry().charAt(0) == '0' && lastNB.equals(placeKey.getNeighbourhood())) {
+        if (placeKey.getCountry().charAt(0) == '0' && lastLocale.equals(placeKey.getLocale())) {
             return;
         }
         result = placeKey.getCountry() + "\t" + placeKey.getLocale() + "\t" + placeKey.getNeighbourhood() + "\t" + placeKey.getUniqueUsers();
         output.set(result);
-        lastNB = placeKey.getNeighbourhood();
+        lastLocale = placeKey.getLocale();
         context.write(output, empty);
     }
 
