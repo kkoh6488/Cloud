@@ -32,13 +32,16 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
             if (lastLocale.equals(locale)) {
                 if (counter < TOP_N) {
                     counter++;
-                    country = country.substring(1);     // Remove the flag for locale
-                    lastLocale = locale;                // Store the locale of the previous row
-                    locale = "1" + locale;              // Add flag so locales will be after the top NB
                 } else {
                     return;
                 }
+            } else {
+                // Reset the counters
+                counter = 0;
             }
+            country = country.substring(1);     // Remove the flag for locale
+            lastLocale = locale;                // Store the locale of the previous row
+            locale = "1" + locale;              // Add flag so locales will be after the top NB
         }
         else {
             country = country.substring(1);             // Remove the flag for NB
