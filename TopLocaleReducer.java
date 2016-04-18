@@ -1,7 +1,6 @@
 package Cloud;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -17,12 +16,6 @@ public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, N
     @Override
     public void reduce(TopLocaleKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 
-        /*
-        result = placeKey.getCountry() + "\t" + placeKey.getLocale()
-                + "\t" + placeKey.getNeighbourhood() + "\t" + placeKey.getUniqueUsers();
-        output.set(result);
-        context.write(output, empty);
-        */
         String locale = placeKey.getLocale();
         if (locale.charAt(locale.length() - 1) == '0') {
             lastLocale = locale.substring(0, locale.length() - 1);     // Remove the flag

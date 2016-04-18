@@ -8,7 +8,7 @@ import java.io.IOException;
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
 public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWritable> {
     private IntWritable count = new IntWritable();
-    private String lastLocale = "";
+    private String lastCountry = "";
     private int counter = 0;
     private final int TOP_N = 7;
 
@@ -27,9 +27,11 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
         int uniqueCount = Integer.parseInt(dataArray[3]);
         count.set(uniqueCount);
 
-        // If it's a locale, only write the top 10
+        String countryWithoutFlag = country.substring(1);
+
+        // If it's a locale, only write the top 10 for each country
         if (country.charAt(0) == '1') {
-            if (lastLocale.equals(locale)) {
+            if (lastCountry.equals(countryWithoutFlag)) {
                 if (counter < TOP_N) {
                     counter++;
                 } else {
@@ -39,12 +41,12 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
                 // Reset the counters
                 counter = 0;
             }
-            country = country.substring(1);     // Remove the flag for locale
-            lastLocale = locale;                // Store the locale of the previous row
+            country = countryWithoutFlag;     // Remove the flag for locale
+            lastCountry = country;                // Store the locale of the previous row
             locale = locale + "1";              // Add flag so locales will be after the top NB
         }
         else {
-            country = country.substring(1);             // Remove the flag for NB
+            country = countryWithoutFlag;             // Remove the flag for NB
             locale = locale + "0";                      // Add flag so NB will appear first
         }
         context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), count);
