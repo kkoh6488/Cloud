@@ -46,6 +46,13 @@ public class SummedPlaceKey implements WritableComparable {
         return compare;
     }
 
+    // Make hashcode dependent on country and locale so keys with same country/locale
+    // will go to same partition
+    @Override
+    public int hashCode() {
+        return (countryName.toString() + localityName.toString()).hashCode();
+    }
+
     @Override
     public String toString()
     {
@@ -65,12 +72,6 @@ public class SummedPlaceKey implements WritableComparable {
                     && neighborhoodName.equals(k.neighborhoodName);
         }
         return false;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return localityName.hashCode() + countryName.hashCode() + neighborhoodName.hashCode();
     }
 
     public String getLocale()
