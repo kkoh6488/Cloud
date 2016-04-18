@@ -11,6 +11,7 @@ import java.util.Map;
 public class UserCountMapper extends Mapper<Object, Text, Text, NullWritable> {
     private Map<UserPlaceKey, String> userCounts = new HashMap<UserPlaceKey, String>();
     private Text mapKey = new Text();
+    private String lastSeenKey = "", thisKey = "";
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -23,7 +24,12 @@ public class UserCountMapper extends Mapper<Object, Text, Text, NullWritable> {
         }
         String userId = dataArray[1];
         String placeId = dataArray[4];
-        mapKey.set(placeId + "\t" + userId);
+        thisKey = placeId + "\t" + userId;
+        if (thisKey.equals(lastSeenKey)) {
+            return;
+        }
+        mapKey.set(thisKey);
+        lastSeenKey = thisKey;
         context.write(mapKey, NullWritable.get());
     }
 }
