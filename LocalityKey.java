@@ -65,7 +65,7 @@ public class LocalityKey implements WritableComparable {
     @Override
     public int hashCode()
     {
-        return localityName.hashCode() + countryName.hashCode() + neighborhoodName.hashCode();
+        return countryName.hashCode();
     }
 
 	public String getLocale()
