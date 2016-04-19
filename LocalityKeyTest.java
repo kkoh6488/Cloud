@@ -13,6 +13,7 @@ public class LocalityKeyTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        /*
         l1 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City", "#");
         l2 = new LocalityKey("xbxI9VGYA5oZH8tLJA", "United Kingdom", "Coventry City", "#");
         l3 = new LocalityKey("qd2lIgybBZVRy1zw", "United States", "Seligman", "#");
@@ -22,7 +23,7 @@ public class LocalityKeyTest extends TestCase {
         f3 = new LocalityKey("placeID-Loc4-3", "Country4", "Locale4-3", "#");
         f4 = new LocalityKey("placeID-Loc4-4", "Country4", "Locale4-4", "#");
         f5 = new LocalityKey("placeID-Loc4-5", "Country4", "Locale4-5", "#");
-
+        */
     }
 
     public void testEqualsFake() throws Exception {

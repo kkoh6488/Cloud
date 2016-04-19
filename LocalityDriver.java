@@ -123,7 +123,7 @@ public class LocalityDriver {
 		sumLocalesJob.waitForCompletion(true);
 		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)
 
-		// Job 4 - Top 10 Locales for each Country and assign top neighbourhood
+		// Job 4 - Top Neighbourhood for each locale
 		Job topLocalesJob = new Job(conf, "n");
 		topLocalesJob.setNumReduceTasks(3);
 		topLocalesJob.setJarByClass(LocalityDriver.class);
