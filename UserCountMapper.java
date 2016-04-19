@@ -28,7 +28,7 @@ public class UserCountMapper extends Mapper<Object, Text, PlaceJoinKey, Text> {
         if (thisKey.equals(lastSeenKey)) {
             return;
         }
-        mapKey.set(placeId);            // Changed to placeID
+        //mapKey.set(placeId);            // Changed to placeID
         output.set(userId);
         lastSeenKey = thisKey;
         joinKey = new PlaceJoinKey(placeId, "1");
