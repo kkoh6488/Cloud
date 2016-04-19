@@ -63,16 +63,15 @@ public class LocalityDriver {
 		Job userCountJob = new Job(conf, "user count");
 		userCountJob.setJarByClass(LocalityDriver.class);
 		//TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
-		//TextOutputFormat.setOutputPath(userCountJob, countTempPath);
 		userCountJob.setNumReduceTasks(3);
 
 		userCountJob.setMapperClass(UserCountMapper.class);
 		userCountJob.setMapperClass(PlaceFileMapper.class);
 
-		//userCountJob.setInputFormatClass(TextInputFormat.);
-
+		// File paths
 		MultipleInputs.addInputPath(userCountJob, new Path(otherArgs[0]), TextInputFormat.class, UserCountMapper.class);
 		MultipleInputs.addInputPath(userCountJob, new Path(otherArgs[1]), TextInputFormat.class, PlaceFileMapper.class);
+		TextOutputFormat.setOutputPath(userCountJob, countTempPath);
 
 		userCountJob.setReducerClass(UserCountReducer.class);
 
@@ -93,8 +92,8 @@ public class LocalityDriver {
 		TextInputFormat.addInputPath(job, countTempFiles);
 		TextOutputFormat.setOutputPath(job, placeTempPath);
 
-		job.setMapperClass(PlaceMapper.class);
-		job.setReducerClass(PlaceReducer.class);
+		job.setMapperClass(IntersectionMapper.class);
+		job.setReducerClass(IntersectionReducer.class);
 
 		job.setMapOutputKeyClass(LocalityKey.class);
 		job.setMapOutputValueClass(Text.class);
