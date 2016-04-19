@@ -115,7 +115,7 @@ public class LocalityDriver {
 		sumLocalesJob.setReducerClass(SumLocaleReducer.class);
 
 		sumLocalesJob.setMapOutputKeyClass(SummedPlaceKey.class);
-		sumLocalesJob.setMapOutputValueClass(IntWritable.class);
+		sumLocalesJob.setMapOutputValueClass(NullWritable.class);
 
 		sumLocalesJob.setOutputKeyClass(Text.class);
 		sumLocalesJob.setOutputValueClass(NullWritable.class);
@@ -134,7 +134,7 @@ public class LocalityDriver {
 		topLocalesJob.setReducerClass(TopLocaleReducer.class);
 
 		topLocalesJob.setMapOutputKeyClass(TopLocaleKey.class);
-		topLocalesJob.setMapOutputValueClass(IntWritable.class);
+		topLocalesJob.setMapOutputValueClass(NullWritable.class);
 
 		topLocalesJob.setOutputKeyClass(Text.class);
 		topLocalesJob.setOutputValueClass(NullWritable.class);

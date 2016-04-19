@@ -14,11 +14,7 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
 
     @Override
     public void reduce(PlaceJoinKey joinKey, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-
-
         for (Text t : values) {
-
-
             if (joinKey.value.toString().equals("0")) {                    // If it's from the place file
                 currentPlaceId = joinKey.placeID.toString();
                 placeData = t.toString();
