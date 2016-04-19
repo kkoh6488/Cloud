@@ -11,7 +11,7 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
     Text output = new Text();
     private String placeData;
     private String outputRow;
-    private String thisUser, lastUser = "", localeForNB;
+    private String thisUser, lastUser = "", currentPlaceId;
 
     @Override
     public void reduce(PlaceJoinKey joinKey, Iterable<Text> values, Context context) throws IOException, InterruptedException {
@@ -26,14 +26,20 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
 
         // If it's from the places.txt file
         if (joinKey.value.equals("0")) {
-            placeData = values.iterator().next().toString();
+            for (Text t : values) {
+                placeData = t.toString();
+            }
             int firstTab = placeData.indexOf("\t");
+            currentPlaceId = placeData.substring(0, firstTab);
             placeData = placeData.substring(firstTab + 2) + "\t";          // Remove the placeID from being output
         } else {
             for (Text t : values) {
                 thisUser = t.toString();
                 lastUser = thisUser;
                 outputRow = placeData + thisUser;
+                if (currentPlaceId.equals(joinKey.placeID)) {
+                    outputRow = "HasPlace-" + outputRow;
+                }
                 output.set(outputRow);
                 context.write(output, NullWritable.get());
             }
