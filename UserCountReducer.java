@@ -16,6 +16,11 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
     @Override
     public void reduce(PlaceJoinKey joinKey, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
+        for (Text t : values) {
+            output.set(joinKey.toString() + "\t" + t.toString());
+            context.write(output, NullWritable.get());
+        }
+        /*
         // If it's from the places.txt file
         if (joinKey.value.equals("0")) {
             placeData = values.iterator().next().toString();
@@ -33,5 +38,6 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
                 context.write(output, NullWritable.get());
             }
         }
+        */
     }
 }

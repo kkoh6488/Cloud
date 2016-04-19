@@ -42,7 +42,7 @@ public class PlaceJoinKey implements WritableComparable{
     @Override
     public String toString()
     {
-        return placeID.toString() + ", " + value.toString();
+        return placeID.toString() + "\t" + value.toString();
     }
 
     @Override
