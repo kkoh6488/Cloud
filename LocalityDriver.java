@@ -140,6 +140,6 @@ public class LocalityDriver {
 		topLocalesJob.setOutputValueClass(NullWritable.class);
 
 		topLocalesJob.waitForCompletion(true);
-		
+
 	}
 }

@@ -18,7 +18,12 @@ public class SummedPlaceKey implements WritableComparable {
     private IntWritable uniqueUsers = new IntWritable();
 
     // Default constructor
-    public SummedPlaceKey() {}
+    public SummedPlaceKey() {
+        localityName = new Text();
+        countryName = new Text();
+        neighborhoodName = new Text();
+        uniqueUsers = new IntWritable();
+    }
 
     public SummedPlaceKey(String country, String locality, String neighborhood, int uniqueUsers)
     {
