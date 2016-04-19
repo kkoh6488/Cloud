@@ -23,8 +23,9 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
 
             if (joinKey.value.toString().equals("0")) {                    // If it's from the place file
                 currentPlaceId = joinKey.placeID.toString();
-                int firstTab = placeData.indexOf("\t");
-                placeData = t.toString().substring(firstTab + 2);
+                placeData = t.toString();
+                int firstTab = placeData.indexOf("\t");                    // Remove the place ID from the output string
+                placeData = placeData.substring(firstTab + 2);
             } else {
                 if (joinKey.placeID.toString().equals(currentPlaceId)) {   // If this place has an ID with it
                     output.set(placeData + "\t" + t.toString());
