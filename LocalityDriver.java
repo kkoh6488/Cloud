@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
@@ -57,23 +58,32 @@ public class LocalityDriver {
 
 		// 3.
 
-		// Count the unique users per place ID
+		// Count the unique users per place ID AND extract place data from places.txt
+		// Requires 2 mappers to same reduce class
 		Job userCountJob = new Job(conf, "user count");
 		userCountJob.setJarByClass(LocalityDriver.class);
-		TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
-		TextOutputFormat.setOutputPath(userCountJob, countTempPath);
+		//TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
+		//TextOutputFormat.setOutputPath(userCountJob, countTempPath);
 		userCountJob.setNumReduceTasks(3);
 
 		userCountJob.setMapperClass(UserCountMapper.class);
+		userCountJob.setMapperClass(PlaceFileMapper.class);
+
+		//userCountJob.setInputFormatClass(TextInputFormat.);
+
+		MultipleInputs.addInputPath(userCountJob, new Path(otherArgs[0]), TextInputFormat.class, UserCountMapper.class);
+		MultipleInputs.addInputPath(userCountJob, new Path(otherArgs[1]), TextInputFormat.class, PlaceFileMapper.class);
+
 		userCountJob.setReducerClass(UserCountReducer.class);
 
-		userCountJob.setMapOutputKeyClass(Text.class);
-		userCountJob.setMapOutputValueClass(NullWritable.class);
+		userCountJob.setMapOutputKeyClass(PlaceJoinKey.class);
+		userCountJob.setMapOutputValueClass(Text.class);
 
 		userCountJob.setOutputKeyClass(Text.class);
 		userCountJob.setOutputValueClass(NullWritable.class);
 
 		userCountJob.waitForCompletion(true);
+		/*
 
 		// Job 2 - Join with place data and filter so only neighborhoods and locales are used.
 		Job job = new Job(conf, "place");
@@ -131,5 +141,6 @@ public class LocalityDriver {
 		topLocalesJob.setOutputValueClass(NullWritable.class);
 
 		topLocalesJob.waitForCompletion(true);
+		*/
 	}
 }

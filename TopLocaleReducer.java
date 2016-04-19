@@ -7,14 +7,14 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class TopLocaleReducer extends Reducer<TopLocaleKey, IntWritable, Text, NullWritable> {
+public class TopLocaleReducer extends Reducer<TopLocaleKey, NullWritable, Text, NullWritable> {
     Text output = new Text();
     String result;
     NullWritable empty = NullWritable.get();
     String lastNB = "", lastLocale = "";
 
     @Override
-    public void reduce(TopLocaleKey placeKey, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+    public void reduce(TopLocaleKey placeKey, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
 
         String locale = placeKey.getLocale();
         if (locale.charAt(locale.length() - 1) == '0') {

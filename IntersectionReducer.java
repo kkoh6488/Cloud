@@ -7,7 +7,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class PlaceReducer extends Reducer<LocalityKey, Text, Text, IntWritable> {
+public class IntersectionReducer extends Reducer<LocalityKey, Text, Text, IntWritable> {
     private Text print = new Text();
     // Checks for duplicate users for a place. This is needed due to the double emitting from the last map.
     private HashSet<Text> seenUsers = new HashSet<>();

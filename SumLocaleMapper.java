@@ -1,13 +1,15 @@
 package Cloud;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
-public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWritable> {
+public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, NullWritable> {
     private IntWritable count = new IntWritable();
+    NullWritable empty = NullWritable.get();
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -28,6 +30,6 @@ public class SumLocaleMapper extends Mapper<Object, Text, SummedPlaceKey, IntWri
         } else {
             country = "0" + country;
         }
-        context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), count);
+        context.write(new SummedPlaceKey(country, locale, neighbourhood, uniqueCount), empty);
     }
 }

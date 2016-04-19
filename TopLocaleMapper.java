@@ -1,12 +1,13 @@
 package Cloud;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 
 // Mapper <inputkey, inputvalue, outputkey, outputvalue>
-public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWritable> {
+public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, NullWritable> {
     private IntWritable count = new IntWritable();
     private String lastCountry = "";
     private int counter = 1;
@@ -45,6 +46,6 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, IntWrita
             locale = locale + "0";                      // Add flag so NB will appear first
         }
         country = country.substring(1);                 // Remove the flag for the country
-        context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), count);
+        context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), NullWritable.get());
     }
 }

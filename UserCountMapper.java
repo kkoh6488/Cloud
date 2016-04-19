@@ -4,14 +4,14 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 // Creates a key based off the placeID and userID to eliminate duplicate pairs when sent to reducer.
-public class UserCountMapper extends Mapper<Object, Text, Text, NullWritable> {
-    private Map<UserPlaceKey, String> userCounts = new HashMap<UserPlaceKey, String>();
+public class UserCountMapper extends Mapper<Object, Text, PlaceJoinKey, Text> {
     private Text mapKey = new Text();
+    private Text output = new Text();
     private String lastSeenKey = "", thisKey = "";
+    PlaceJoinKey joinKey;
+    NullWritable empty = NullWritable.get();
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -28,8 +28,10 @@ public class UserCountMapper extends Mapper<Object, Text, Text, NullWritable> {
         if (thisKey.equals(lastSeenKey)) {
             return;
         }
-        mapKey.set(thisKey);
+        mapKey.set(placeId);            // Changed to placeID
+        output.set(userId);
         lastSeenKey = thisKey;
-        context.write(mapKey, NullWritable.get());
+        joinKey = new PlaceJoinKey(placeId, "1-" + userId);
+        context.write(joinKey, output);
     }
 }
