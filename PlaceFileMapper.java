@@ -45,7 +45,7 @@ public class PlaceFileMapper extends Mapper<Object, Text, PlaceJoinKey, Text> {
             return;
         }
         result = placeId + "\t" + country + "\t" + locality + "\t" + neighbourhood;
-        joinKey = new PlaceJoinKey(placeId, "0-");
+        joinKey = new PlaceJoinKey(placeId, "0");
         output.set(result);
         context.write(joinKey, output);
     }
