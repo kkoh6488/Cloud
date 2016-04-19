@@ -15,7 +15,7 @@ public class IntersectionMapper extends Mapper<Object, Text, LocalityKey, Text> 
             throws IOException, InterruptedException {
 
         String[] dataArray = value.toString().split("\t"); //split the data into array
-        if (dataArray.length < 5 )
+        if (dataArray.length < 4 )
         {
             //  record with invalid data
             return; // don't emit anything
@@ -23,7 +23,7 @@ public class IntersectionMapper extends Mapper<Object, Text, LocalityKey, Text> 
         String country = dataArray[0];
         String locality = dataArray[1];
         String neighborhood = dataArray[2];
-        String userId = dataArray[4];
+        String userId = dataArray[3];
 
         localeKey = new LocalityKey(country, locality, neighborhood);
         output.set(userId);

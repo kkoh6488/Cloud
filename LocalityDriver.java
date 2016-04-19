@@ -82,7 +82,7 @@ public class LocalityDriver {
 		userCountJob.setOutputValueClass(NullWritable.class);
 
 		userCountJob.waitForCompletion(true);
-		/*
+
 
 		// Job 2 - Join with place data and filter so only neighborhoods and locales are used.
 		Job job = new Job(conf, "place");
@@ -140,6 +140,6 @@ public class LocalityDriver {
 		topLocalesJob.setOutputValueClass(NullWritable.class);
 
 		topLocalesJob.waitForCompletion(true);
-		*/
+		
 	}
 }
