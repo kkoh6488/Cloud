@@ -15,7 +15,10 @@ public class PlaceJoinKey implements WritableComparable{
     Text value;
     Text placeID;
 
-    public PlaceJoinKey(){}
+    public PlaceJoinKey(){
+        value = new Text();
+        placeID = new Text();
+    }
 
     public PlaceJoinKey(String placeID, String value) {
         this.value = new Text(value);

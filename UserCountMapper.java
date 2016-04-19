@@ -31,7 +31,7 @@ public class UserCountMapper extends Mapper<Object, Text, PlaceJoinKey, Text> {
         mapKey.set(placeId);            // Changed to placeID
         output.set(userId);
         lastSeenKey = thisKey;
-        joinKey = new PlaceJoinKey(placeId, "1-" + userId);
+        joinKey = new PlaceJoinKey(placeId, "1");
         context.write(joinKey, output);
     }
 }
