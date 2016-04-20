@@ -6,6 +6,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
+// Counts the number of users per place and joins the place table.
 public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWritable> {
 
     Text output = new Text();
@@ -21,38 +22,13 @@ public class UserCountReducer extends Reducer<PlaceJoinKey, Text, Text, NullWrit
                 int firstTab = placeData.indexOf("\t");                    // Remove the place ID from the output string
                 placeData = placeData.substring(firstTab + 1);
             } else {
-                if (joinKey.placeID.toString().equals(currentPlaceId)) {   // If this place has an ID with it
+                if (joinKey.placeID.toString().equals(currentPlaceId)) {   // If this place has an ID with it, join and write it.
                     output.set(placeData + "\t" + t.toString());
                     context.write(output, NullWritable.get());
                 } else {
                     currentPlaceId = "";
                 }
             }
-
         }
-        //if (!localeForNB.equals(joinKey.))
-
-        /*
-        // If it's from the places.txt file
-        if (joinKey.value.equals("0")) {
-            for (Text t : values) {
-                placeData = t.toString();
-            }
-            int firstTab = placeData.indexOf("\t");
-            currentPlaceId = placeData.substring(0, firstTab);
-            placeData = placeData.substring(firstTab + 2) + "\t";          // Remove the placeID from being output
-        } else {
-            for (Text t : values) {
-                thisUser = t.toString();
-                lastUser = thisUser;
-                outputRow = placeData + thisUser;
-                if (currentPlaceId.equals(joinKey.placeID)) {
-                    outputRow = "HasPlace-" + outputRow;
-                }
-                output.set(outputRow);
-                context.write(output, NullWritable.get());
-            }
-        }
-        */
     }
 }

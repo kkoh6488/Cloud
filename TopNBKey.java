@@ -8,24 +8,17 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-/* Key for locality data.
- * Will be passed to the combiner for aggregation.
- */
-public class TopLocaleKey implements WritableComparable {
+/* Key which sorts records so the top neighbourhoods can be retrieved in order. */
+public class TopNBKey implements WritableComparable {
     private Text localityName = new Text();
     private Text countryName = new Text();
     private Text neighborhoodName = new Text();
     private IntWritable uniqueUsers = new IntWritable();
 
     // Default constructor
-    public TopLocaleKey() {
-        localityName = new Text();
-        countryName = new Text();
-        neighborhoodName = new Text();
-        uniqueUsers = new IntWritable();
-    }
+    public TopNBKey() {}
 
-    public TopLocaleKey(String country, String locality, String neighborhood, int uniqueUsers)
+    public TopNBKey(String country, String locality, String neighborhood, int uniqueUsers)
     {
         this.localityName.set(locality);
         this.neighborhoodName.set(neighborhood);
@@ -36,26 +29,29 @@ public class TopLocaleKey implements WritableComparable {
     @Override
     public int compareTo(Object o)
     {
-        TopLocaleKey k = (TopLocaleKey) o;
+        TopNBKey k = (TopNBKey) o;
         // Sort based on country name, then by number of unique users (descending).
         int compare = countryName.compareTo(k.countryName);
         if (compare == 0) {
-            compare = k.uniqueUsers.compareTo(uniqueUsers);
+            compare = localityName.compareTo(k.localityName);
             if (compare == 0) {
-                compare = localityName.compareTo(k.localityName);
+                compare = k.uniqueUsers.compareTo(uniqueUsers);
                 if (compare == 0) {
-                    compare = neighborhoodName.compareTo(k.neighborhoodName);
+                    if (compare == 0) {
+                        compare = neighborhoodName.compareTo(k.neighborhoodName);
+                    }
                 }
             }
+
         }
         return compare;
     }
 
-    // Make hashcode dependent on country and locale so keys with same country/locale
+    // Make hashcode dependent on country so keys with same country
     // will go to same partition
     @Override
     public int hashCode() {
-        return (countryName.toString().substring(1)).hashCode();
+        return countryName.toString().hashCode();
     }
 
     @Override
@@ -70,9 +66,9 @@ public class TopLocaleKey implements WritableComparable {
     @Override
     public boolean equals(Object o)
     {
-        if(o instanceof TopLocaleKey)
+        if(o instanceof TopNBKey)
         {
-            TopLocaleKey k = (TopLocaleKey) o;
+            TopNBKey k = (TopNBKey) o;
             return localityName.equals(k.localityName) && countryName.equals(k.countryName)
                     && neighborhoodName.equals(k.neighborhoodName);
         }

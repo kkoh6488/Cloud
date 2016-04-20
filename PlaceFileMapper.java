@@ -1,9 +1,7 @@
 package Cloud;
 
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
 import java.io.IOException;
 
 // Outputs neighbourhoods and locales from the places.txt file.
@@ -11,8 +9,6 @@ public class PlaceFileMapper extends Mapper<Object, Text, PlaceJoinKey, Text> {
     private Text output = new Text();
     private String result;
     PlaceJoinKey joinKey;
-
-    private NullWritable empty = NullWritable.get();
 
     @Override
     public void map(Object key, Text value, Context context)

@@ -4,13 +4,10 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-/* Key for locality data.
- * Will be passed to the combiner for aggregation.
- */
+/* Key for counting the number of unique users per location. */
 public class LocalityKey implements WritableComparable {
 	private Text localityName = new Text();
 	private Text countryName = new Text();
@@ -30,7 +27,7 @@ public class LocalityKey implements WritableComparable {
 	public int compareTo(Object o)
 	{
         LocalityKey lk = (LocalityKey) o;
-		// Sort based on country name (including localities first, then neighbourhoods), then by number of unique users
+		// Sort based on country name (including localities first, then neighbourhoods).
 		int compare = countryName.compareTo(lk.countryName);
 		if (compare == 0) {
 			compare = localityName.compareTo(lk.localityName);

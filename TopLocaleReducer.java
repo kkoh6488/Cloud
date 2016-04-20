@@ -6,35 +6,30 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
+/* Gets the top locales per country once they are in sorted order of unique users. */
 public class TopLocaleReducer extends Reducer<TopLocaleKey, NullWritable, Text, NullWritable> {
     Text output = new Text();
     String result;
     NullWritable empty = NullWritable.get();
-    String lastNB = "", lastLocale = "";
+    String lastCountry = "";
+    int TOP_N = 10;
+    int counter = 1;
 
     @Override
     public void reduce(TopLocaleKey placeKey, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
-        String locale = placeKey.getLocale();
-        char flag = locale.charAt(locale.length() - 1);
-        if (flag == '0') {
-            locale = locale.substring(0, locale.length() - 1);
-            if (!locale.equals(lastLocale)) {
-                lastNB = ", " + placeKey.getNeighbourhood() + ":" + placeKey.getUniqueUsers();
-                lastLocale = locale;
-            } else {
+        // Emit the sorted rows - but only the top 10 locales per country
+        if (placeKey.getCountry().charAt(0) == '1' && lastCountry.equals(placeKey.getCountry())) {
+            if (counter >= TOP_N) {
                 return;
+            } else {
+                counter++;
             }
         } else {
-            // If there's a top neighbourhood for this locale
-            locale = locale.substring(0, locale.length() - 1);
-            if (locale.equals(lastLocale)) {
-                result = placeKey.getCountry() + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + lastNB + ")};";
-            } else {
-                // Otherwise there isn't a top NB
-                result = placeKey.getCountry() + "\t{(" + locale + ":" + placeKey.getUniqueUsers() + ")};";
-            }
-            output.set(result);
-            context.write(output, empty);
+            counter = 1;
         }
+        result = placeKey.getCountry() + "\t" + placeKey.getLocale() + "\t" + placeKey.getNeighbourhood() + "\t" + placeKey.getUniqueUsers();
+        output.set(result);
+        lastCountry = placeKey.getCountry();
+        context.write(output, empty);
     }
 }

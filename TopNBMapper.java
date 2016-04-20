@@ -6,10 +6,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 
-/* Gets the top 10 localities per country by emitting sorted rows */
-public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, NullWritable> {
+/* Emits keys so that top neighbourhoods appear above their locality. */
+public class TopNBMapper extends Mapper<Object, Text, TopNBKey, NullWritable> {
     private IntWritable count = new IntWritable();
-    NullWritable empty = NullWritable.get();
 
     @Override
     public void map(Object key, Text value, Context context)
@@ -25,11 +24,14 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, NullWrit
         String neighbourhood = dataArray[2];
         int uniqueCount = Integer.parseInt(dataArray[3]);
         count.set(uniqueCount);
-        if (neighbourhood.equals("#")) {
-            country = "1" + country;
-        } else {
-            country = "0" + country;
+
+        if (country.charAt(0) == '1') {
+            locale = locale + "1";                      // Add flag so locales will be after the top NB
         }
-        context.write(new TopLocaleKey(country, locale, neighbourhood, uniqueCount), empty);
+        else {
+            locale = locale + "0";                      // Add flag so NB will appear first
+        }
+        country = country.substring(1);                 // Remove the flag for the country
+        context.write(new TopNBKey(country, locale, neighbourhood, uniqueCount), NullWritable.get());
     }
 }

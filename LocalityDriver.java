@@ -20,7 +20,7 @@ public class LocalityDriver {
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
 		if (otherArgs.length != 3) {
-			System.err.println("Usage: TagDriver <in> <places.txt-path> <out>");
+			System.err.println("Usage: LocalityDriver <input1,input2,etc> <places.txt-path> <out>");
 			System.exit(2);
 		}
 
@@ -36,7 +36,6 @@ public class LocalityDriver {
 		Path sortLocalesFiles = new Path("tempSortLocale/*");
 
 		Path finalPath = new Path(otherArgs[2]);
-		/*
 		if (fs.exists(countTempPath)) {
 			fs.delete(countTempPath, true);
 		}
@@ -46,33 +45,23 @@ public class LocalityDriver {
 		if (fs.exists(sortLocalesPath)) {
 			fs.delete(sortLocalesPath, true);
 		}
-		*/
 		if (fs.exists(finalPath)) {
 			fs.delete(finalPath, true);
 		}
 
-		// 1. Get rid of duplicates - emit placeID, userID
-
-		// 2. Join - filter only neighbourhoods and locales - no summing, just filter
-
-		// 2. Sum number of unique users per locale - including neighbourhoods
-		// Emit locales and neighbourhoods and unique user count
-
-		// 3.
-
-		/*
-		// Count the unique users per place ID AND extract place data from places.txt
-		// Requires 2 mappers to same reduce class
-		Job userCountJob = new Job(conf, "user count");
+		// Eliminate duplicates and join with place data
+		Job userCountJob = new Job(conf, "User count");
 		userCountJob.setJarByClass(LocalityDriver.class);
-		//TextInputFormat.addInputPath(userCountJob, new Path(otherArgs[0]));
 		userCountJob.setNumReduceTasks(3);
 
 		userCountJob.setMapperClass(UserCountMapper.class);
 		userCountJob.setMapperClass(PlaceFileMapper.class);
 
-		// File paths
-		MultipleInputs.addInputPath(userCountJob, new Path(otherArgs[0]), TextInputFormat.class, UserCountMapper.class);
+		// Input file paths. The first argument is comma delimited.
+		String[] inputFiles = otherArgs[0].split(",");
+		for (String s : inputFiles) {
+			MultipleInputs.addInputPath(userCountJob, new Path(s), TextInputFormat.class, UserCountMapper.class);
+		}
 		MultipleInputs.addInputPath(userCountJob, new Path(otherArgs[1]), TextInputFormat.class, PlaceFileMapper.class);
 		TextOutputFormat.setOutputPath(userCountJob, countTempPath);
 
@@ -86,17 +75,16 @@ public class LocalityDriver {
 
 		userCountJob.waitForCompletion(true);
 
-
-		// Job 2 - Join with place data and filter so only neighborhoods and locales are used.
-		Job job = new Job(conf, "place");
+		// Job 2 - Count the number of unique users per place
+		Job job = new Job(conf, "Place");
 		job.addCacheFile(new Path(otherArgs[1]).toUri());
 		job.setNumReduceTasks(3);
 		job.setJarByClass(LocalityDriver.class);
 		TextInputFormat.addInputPath(job, countTempFiles);
 		TextOutputFormat.setOutputPath(job, placeTempPath);
 
-		job.setMapperClass(IntersectionMapper.class);
-		job.setReducerClass(IntersectionReducer.class);
+		job.setMapperClass(CountUniqueMapper.class);
+		job.setReducerClass(CountUniqueReducer.class);
 
 		job.setMapOutputKeyClass(LocalityKey.class);
 		job.setMapOutputValueClass(Text.class);
@@ -106,33 +94,12 @@ public class LocalityDriver {
 
 		job.waitForCompletion(true);
 
-		// Job 3 - Sort localities and neighbourhoods to be in decreasing order
-		// Only print top neighbourhood for each
-		Job sumLocalesJob = new Job(conf, "sum");
-		sumLocalesJob.setNumReduceTasks(3);
-		sumLocalesJob.setJarByClass(SumLocaleMapper.class);
-		TextInputFormat.addInputPath(sumLocalesJob, placeTempFiles);
-		TextOutputFormat.setOutputPath(sumLocalesJob, sortLocalesPath);
-
-		sumLocalesJob.setMapperClass(SumLocaleMapper.class);
-		sumLocalesJob.setReducerClass(SumLocaleReducer.class);
-
-		sumLocalesJob.setMapOutputKeyClass(SummedPlaceKey.class);
-		sumLocalesJob.setMapOutputValueClass(NullWritable.class);
-
-		sumLocalesJob.setOutputKeyClass(Text.class);
-		sumLocalesJob.setOutputValueClass(NullWritable.class);
-
-		sumLocalesJob.waitForCompletion(true);
-		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)
-		*/
-
-		// Job 4 - Top Neighbourhood for each locale
-		Job topLocalesJob = new Job(conf, "n");
+		// Job 3 - Get the top 10 localities
+		Job topLocalesJob = new Job(conf, "Top");
 		topLocalesJob.setNumReduceTasks(3);
-		topLocalesJob.setJarByClass(LocalityDriver.class);
-		TextInputFormat.addInputPath(topLocalesJob, sortLocalesFiles);
-		TextOutputFormat.setOutputPath(topLocalesJob, finalPath);
+		topLocalesJob.setJarByClass(TopLocaleMapper.class);
+		TextInputFormat.addInputPath(topLocalesJob, placeTempFiles);
+		TextOutputFormat.setOutputPath(topLocalesJob, sortLocalesPath);
 
 		topLocalesJob.setMapperClass(TopLocaleMapper.class);
 		topLocalesJob.setReducerClass(TopLocaleReducer.class);
@@ -144,6 +111,24 @@ public class LocalityDriver {
 		topLocalesJob.setOutputValueClass(NullWritable.class);
 
 		topLocalesJob.waitForCompletion(true);
+
+		// Job 4 - Top Neighbourhood for each locale
+		Job topNBJob = new Job(conf, "Top NB");
+		topNBJob.setNumReduceTasks(3);
+		topNBJob.setJarByClass(LocalityDriver.class);
+		TextInputFormat.addInputPath(topNBJob, sortLocalesFiles);
+		TextOutputFormat.setOutputPath(topNBJob, finalPath);
+
+		topNBJob.setMapperClass(TopNBMapper.class);
+		topNBJob.setReducerClass(TopNBReducer.class);
+
+		topNBJob.setMapOutputKeyClass(TopNBKey.class);
+		topNBJob.setMapOutputValueClass(NullWritable.class);
+
+		topNBJob.setOutputKeyClass(Text.class);
+		topNBJob.setOutputValueClass(NullWritable.class);
+
+		topNBJob.waitForCompletion(true);
 
 	}
 }

@@ -1,38 +1,35 @@
-package Cloud;
+package Cloud.Unused;
 
-import Cloud.Unused.UserPlaceKey;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.Text;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/*  Key used for joining place file with photo records, by placeId. */
-public class PlaceJoinKey implements WritableComparable{
+/**
+ * Created by Ken on 16/04/2016.
+ */
+public class UserPlaceKey implements WritableComparable{
 
-    Text value;
+    Text user;
     Text placeID;
 
-    public PlaceJoinKey(){
-        value = new Text();
-        placeID = new Text();
-    }
+    public UserPlaceKey(){}
 
-    public PlaceJoinKey(String placeID, String value) {
-        this.value = new Text(value);
+    public UserPlaceKey(String user, String placeID) {
+        this.user = new Text(user);
         this.placeID = new Text(placeID);
     }
 
-    /* Sorts by the placeID and then by flag value */
     @Override
     public int compareTo(Object o) {
-        PlaceJoinKey k = (PlaceJoinKey) o;
-        if (value.equals(k.value) && placeID.equals(k.placeID)) {
+        UserPlaceKey k = (UserPlaceKey) o;
+        if (user.equals(k.user) && placeID.equals(k.placeID)) {
             return 0;
         } else {
             int result = placeID.compareTo(k.placeID);
             if (result == 0) {
-                result = value.compareTo(k.value);
+                result = user.compareTo(k.user);
             }
             return result;
         }
@@ -41,7 +38,7 @@ public class PlaceJoinKey implements WritableComparable{
     @Override
     public String toString()
     {
-        return placeID.toString() + "\t" + value.toString();
+        return user.toString() + "," + placeID.toString();
     }
 
     @Override
@@ -49,8 +46,8 @@ public class PlaceJoinKey implements WritableComparable{
     {
         if(o instanceof UserPlaceKey)
         {
-            PlaceJoinKey k = (PlaceJoinKey) o;
-            return value.equals(k.value) && placeID.equals(k.placeID);
+            UserPlaceKey k = (UserPlaceKey) o;
+            return user.equals(k.user) && placeID.equals(k.placeID);
         }
         return false;
     }
@@ -58,19 +55,21 @@ public class PlaceJoinKey implements WritableComparable{
     @Override
     public int hashCode()
     {
-        return placeID.hashCode();
+        return user.hashCode() + placeID.hashCode();
     }
 
     @Override
+    //overriding default readFields method.
+    //It de-serializes the byte stream data
     public void readFields(DataInput in ) throws IOException {
-        value.readFields( in );
+        user.readFields( in );
         placeID.readFields( in );
     }
 
     @Override
     //It serializes object data into byte stream data
     public void write(DataOutput out) throws IOException {
-        value.write( out );
+        user.write( out );
         placeID.write( out );
     }
 }
