@@ -29,7 +29,9 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, NullWrit
         count.set(uniqueCount);
 
         // If it's a locale, only write the top 10 for each country
+
         if (country.charAt(0) == '1') {
+            /*
             if (lastCountry.equals(country)) {
                 if (counter < TOP_N) {
                     counter++;
@@ -39,7 +41,8 @@ public class TopLocaleMapper extends Mapper<Object, Text, TopLocaleKey, NullWrit
             } else {
                 counter = 1;
             }
-            lastCountry = country;                      // Store the locale of the previous row
+            */
+            //lastCountry = country;                      // Store the locale of the previous row
             locale = locale + "1";                      // Add flag so locales will be after the top NB
         }
         else {

@@ -37,13 +37,19 @@ public class TopLocaleKey implements WritableComparable {
         if (compare == 0) {
             compare = localityName.compareTo(k.localityName);
             if (compare == 0) {
-                compare = neighborhoodName.compareTo(k.neighborhoodName);
+                compare = k.uniqueUsers.compareTo(uniqueUsers);
+                if (compare == 0) {
+                    if (compare == 0) {
+                        compare = neighborhoodName.compareTo(k.neighborhoodName);
+                    }
+                }
             }
+
         }
         return compare;
     }
 
-    // Make hashcode dependent on country and locale so keys with same country/locale
+    // Make hashcode dependent on country so keys with same country
     // will go to same partition
     @Override
     public int hashCode() {

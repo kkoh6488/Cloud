@@ -36,6 +36,7 @@ public class LocalityDriver {
 		Path sortLocalesFiles = new Path("tempSortLocale/*");
 
 		Path finalPath = new Path(otherArgs[2]);
+		/*
 		if (fs.exists(countTempPath)) {
 			fs.delete(countTempPath, true);
 		}
@@ -45,6 +46,7 @@ public class LocalityDriver {
 		if (fs.exists(sortLocalesPath)) {
 			fs.delete(sortLocalesPath, true);
 		}
+		*/
 		if (fs.exists(finalPath)) {
 			fs.delete(finalPath, true);
 		}
@@ -58,6 +60,7 @@ public class LocalityDriver {
 
 		// 3.
 
+		/*
 		// Count the unique users per place ID AND extract place data from places.txt
 		// Requires 2 mappers to same reduce class
 		Job userCountJob = new Job(conf, "user count");
@@ -122,6 +125,7 @@ public class LocalityDriver {
 
 		sumLocalesJob.waitForCompletion(true);
 		//System.exit(sumLocalesJob.waitForCompletion(true) ? 0 : 1)
+		*/
 
 		// Job 4 - Top Neighbourhood for each locale
 		Job topLocalesJob = new Job(conf, "n");
