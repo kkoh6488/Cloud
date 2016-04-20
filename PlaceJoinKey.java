@@ -1,6 +1,5 @@
 package Cloud;
 
-import Cloud.Unused.UserPlaceKey;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.Text;
 import java.io.DataInput;
@@ -47,7 +46,7 @@ public class PlaceJoinKey implements WritableComparable{
     @Override
     public boolean equals(Object o)
     {
-        if(o instanceof UserPlaceKey)
+        if(o instanceof PlaceJoinKey)
         {
             PlaceJoinKey k = (PlaceJoinKey) o;
             return value.equals(k.value) && placeID.equals(k.placeID);
